@@ -3,14 +3,6 @@ const router = express.Router();
 
 const Build = require(`../models/buildSchema.js`);
 const Enemy = require(`../models/enemySchema.js`);
-// const validateEnemySchema = require(`../functions/validations.js`);
-// const validateBuildingSchema = require(`../functions/validations.js`);
-// const validateSeaUnitsSchema = require(`../functions/validations.js`);
-// const validateairUnitsSchema = require(`../functions/validations.js`);
-// const validateVehUnitsSchema = require(`../functions/validations.js`);
-// const validateInfUnitsSchema = require(`../functions/validations.js`);
-// const validateMissileSchema = require(`../functions/validations.js`);
-// const validateLandSchema = require(`../functions/validations.js`);
 
 const { 
 	validateEnemySchema,
@@ -262,5 +254,6 @@ router.post(`/reset`, catchAsync( async (req, res) =>{
 router.all(`*`, (req, res, next) =>{
 	next(new ExpressError(`Page Not Found`, 404));
 })
+
 
 module.exports = router;

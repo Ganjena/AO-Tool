@@ -1,13 +1,16 @@
-
+const Joi = require("joi");
 const ExpressError = require(`../utilities/ExpressError.js`); 
-const enemySchema = require(`../utilities/joiSchema.js`);
-const buildingSchema = require(`../utilities/joiSchema.js`);
-const seaUnitSchema = require(`../utilities/joiSchema.js`);
-const airUnitSchema = require(`../utilities/joiSchema.js`);
-const vehUnitSchema = require(`../utilities/joiSchema.js`);
-const infUnitSchema = require(`../utilities/joiSchema.js`);
-const missileSchema = require(`../utilities/joiSchema.js`);
-const landSchema = require(`../utilities/joiSchema.js`);
+const {
+    enemySchema,
+    buildingSchema,
+    seaUnitSchema,
+    airUnitSchema,
+    vehUnitSchema,
+    infUnitSchema,
+    missileSchema,
+    landSchema
+} = require(`../utilities/joiSchema.js`);
+
 
 //validates data in the request before updating the database
 module.exports.validateEnemySchema = (req, res, next) =>{
@@ -33,13 +36,15 @@ module.exports.validateBuildingSchema = (req, res, next) =>{
 module.exports.validateSeaUnitsSchema = (req, res, next) =>{
 	const {error} = seaUnitSchema.validate(req.body);
 	console.log(req.body)
+	console.log(error)
 	if (error){
-		const msg = error.details.map(el => el.message).join(``)
+		const msg = error.details.map(el => el.message).join(`,`)
 		throw new ExpressError(msg, 400)
 	}else {
 		next();
 	}
 }
+
 
 module.exports.validateAirUnitsSchema = (req, res, next) =>{
 	const {error} = airUnitSchema.validate(req.body);
@@ -92,11 +97,3 @@ module.exports.validateLandSchema = (req, res, next) =>{
 	}
 }
 
-// module.exports = validateEnemySchema;
-// module.exports = validateBuildingSchema;
-// module.exports = validateSeaUnitsSchema;
-// module.exports = validateairUnitsSchema;
-// module.exports = validateVehUnitsSchema;
-// module.exports = validateInfUnitsSchema;
-// module.exports = validateMissileSchema;
-// module.exports = validateLandSchema;

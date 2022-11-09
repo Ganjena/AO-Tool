@@ -4,10 +4,6 @@ const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
 const Build = require(`./models/buildSchema.js`);
 const { calcNw, calcPower} = require(`./functions/userCalcs.js`);
-// const User = require("./models/userSchema.js");
-// const Enemy = require(`./models/enemySchema.js`)
-// const catchAsync = require(`./utilities/catchAsync.js`);
-// const ExpressError = require(`./utilities/ExpressError.js`); 
 const routes = require(`./routes/routes.js`);
 const app = express();
 
@@ -16,6 +12,15 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 //body parser - ability to parse form data.
 app.use(express.urlencoded({ extended: true }));
+
+
+mongoose.connect("mongodb://localhost:27017/AO_TOOL");
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", () => {
+	console.log("Database connected");
+});
 
 async function status(req, res, next){
 	// finds model in db
@@ -31,14 +36,6 @@ async function status(req, res, next){
 }
 
 app.use(status);
-
-mongoose.connect("mongodb://localhost:27017/AO_TOOL");
-
-const db = mongoose.connection;
-db.on("error", console.error.bind(console, "connection error:"));
-db.once("open", () => {
-	console.log("Database connected");
-});
 
 // call all routes from routes.ejs file.
 app.use(`/`, routes);

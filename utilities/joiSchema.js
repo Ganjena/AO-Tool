@@ -240,8 +240,8 @@ const buildingSchema = Joi.object({
     }),
     ams: Joi.object({
         amount: Joi.number().allow(null, ``).min(0)
-    }),
-})
+    })
+});
 
 const seaUnitSchema = Joi.object({
     submarine: Joi.object({
@@ -271,7 +271,7 @@ const seaUnitSchema = Joi.object({
     aircraftCarrier: Joi.object({
         amount: Joi.number().allow(null, ``).min(0)
     })
-})
+});
 
 const airUnitSchema = Joi.object({
     spyPlane: Joi.object({
@@ -328,7 +328,7 @@ const vehUnitSchema = Joi.object({
     m1Tank: Joi.object({
         amount: Joi.number().allow(null, ``).min(0)
     })
-})
+});
 
 const infUnitSchema = Joi.object({
     thief: Joi.object({
@@ -389,14 +389,16 @@ const missileSchema = Joi.object({
 
 const landSchema = Joi.object({
     land: Joi.number().allow(null, ``).min(0)
-
 })
 
-module.exports = enemySchema;
-module.exports = buildingSchema;
-module.exports = seaUnitSchema;
-module.exports = airUnitSchema;
-module.exports = vehUnitSchema;
-module.exports = infUnitSchema;
-module.exports = missileSchema;
-module.exports = landSchema;
+module.exports = {
+    enemySchema,
+    buildingSchema,
+    seaUnitSchema,
+    airUnitSchema,
+    vehUnitSchema,
+    infUnitSchema,
+    missileSchema,
+    landSchema
+}
+
