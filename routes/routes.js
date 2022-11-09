@@ -1,0 +1,266 @@
+const express = require(`express`);
+const router = express.Router();
+
+const Build = require(`../models/buildSchema.js`);
+const Enemy = require(`../models/enemySchema.js`);
+// const validateEnemySchema = require(`../functions/validations.js`);
+// const validateBuildingSchema = require(`../functions/validations.js`);
+// const validateSeaUnitsSchema = require(`../functions/validations.js`);
+// const validateairUnitsSchema = require(`../functions/validations.js`);
+// const validateVehUnitsSchema = require(`../functions/validations.js`);
+// const validateInfUnitsSchema = require(`../functions/validations.js`);
+// const validateMissileSchema = require(`../functions/validations.js`);
+// const validateLandSchema = require(`../functions/validations.js`);
+
+const { 
+	validateEnemySchema,
+	validateLandSchema,
+	validateBuildingSchema,
+	validateSeaUnitsSchema,
+	validateAirUnitsSchema,
+	validateVehUnitsSchema,
+	validateInfUnitsSchema,
+	validateMissileSchema,
+} = require(`../functions/validations.js`);
+
+const catchAsync = require(`../utilities/catchAsync.js`);
+const ExpressError = require(`../utilities/ExpressError.js`);
+
+
+const {
+	updateUnitsDb,
+    updateBldMisDb,
+    calcAttackPower,
+    calcWinLoss
+	} = require(`../functions/userCalcs.js`);
+
+const {
+	calcEnemyPower,
+    updateEnemy,
+    calcEnemyLand,
+    calcEnemyDef
+	} = require(`../functions/enemyCalcs.js`);
+
+router.get("/", catchAsync( async (req, res) => {
+	res.render("index");
+})
+);
+
+router.get("/home", (req, res) => {
+	const stats = req.stats;
+	res.render("home", {stats});
+});
+
+router.get(`/enemy`, catchAsync( async (req, res) => {
+	// update enemy land equations and add them to database
+	calcEnemyLand();
+	//update enemy power equations and add them to database
+	calcEnemyPower();
+	const {units, buildings, land, ppeActive} = await Enemy.findOne();
+	const stats = req.stats;
+	res.render(`enemy`, {stats, units, buildings, land, ppeActive});
+})
+);
+
+router.post(`/enemy`, validateEnemySchema, catchAsync( async (req, res) =>{
+	// take enemy input from user and add it to the database
+	updateEnemy(req.body);
+	// update enemy land equations and add them to database
+	calcEnemyLand();
+	//update enemy power equations and add them to database
+	calcEnemyPower();
+	//update enemy attack/defence equations for the attack page
+	calcEnemyDef();
+	res.redirect(`/enemy`)
+})
+);
+
+router.get("/attack", catchAsync( async(req, res) => {
+	const stats = req.stats;
+	const {attackStats} = await Enemy.findOne({});
+	const build = await Build.findOne({});
+	//update and check all attack powers
+	res.render("attackCalc", {stats, attackStats, build});
+})
+);
+
+router.get("/power", catchAsync( async (req, res) => {
+	const stats = req.stats;
+	const enemySetup = await Enemy.findOne({});
+	res.render("powerCalc", {stats, enemySetup});
+})
+);
+
+router.get("/stats", (req, res) => {
+	const stats = req.stats;
+	res.render("stats", {stats});
+});
+
+router.get("/research", catchAsync( async (req, res) => {
+	const {research } = await Build.findOne();
+	const stats = req.stats;
+		res.render("build/research", {research, stats});
+	})
+);
+
+router.post(`/research`, catchAsync( async (req, res) => {
+	const updateDb = await Build.findOne();
+	for (let key of Object.keys(req.body)){
+		if(key === `add`){
+			updateDb.research[req.body.add].level += 1;
+		}else if (key === `remove`) {
+			updateDb.research[req.body.remove].level -= 1;
+		}
+	}
+	await updateDb.save();
+	res.redirect(`/research`);
+}));
+
+router.get("/land", catchAsync( async (req, res) => {
+		const stats = req.stats;
+		res.render("build/land", {stats});
+	})
+);
+
+router.post(`/land`, validateLandSchema, catchAsync( async (req, res) => {
+	const updateDb = await Build.findOne();
+	updateDb.miscStat.land = req.body.land;
+	await updateDb.save();
+	res.redirect(`/land`);
+}));
+
+router.get("/buildings", catchAsync( async (req, res) => {
+	const {buildings} = await Build.findOne();
+	const stats = req.stats;
+	res.render("build/buildings", {buildings, stats});
+	})
+);
+
+router.post(`/buildings`, validateBuildingSchema, catchAsync( async (req, res) =>{
+	updateBldMisDb(req.body, `buildings`);
+	res.redirect(`/buildings`);
+})
+);
+
+router.get("/sea_units", catchAsync( async (req, res) => {
+		const {units} = await Build.findOne();
+		const seaUnits = units.seaUnits;
+		const stats = req.stats;
+			//update attack power stats
+	calcAttackPower();
+	// updates win/lose outcomes
+	calcWinLoss();
+		res.render("build/seaUnits", {seaUnits, stats});
+	})
+);
+
+router.post(`/sea_units`, validateSeaUnitsSchema, catchAsync( async (req, res) =>{
+	updateUnitsDb(req.body, `units`, `seaUnits`);
+	res.redirect(`/sea_units`);
+}));
+
+router.get("/air_units", catchAsync( async (req, res) => {
+	const { units } = await Build.findOne();
+	const airUnits = units.airUnits;
+	const stats = req.stats;
+		//update attack power stats
+		calcAttackPower();
+		// updates win/lose outcomes
+		calcWinLoss();
+		res.render("build/airUnits", {airUnits, stats});
+	})
+);
+
+router.post(`/air_units`, validateAirUnitsSchema, catchAsync( async (req, res) =>{
+	updateUnitsDb(req.body, `units`, `airUnits`);
+	res.redirect(`/air_units`);
+}));
+
+router.get("/vehicle_units", catchAsync( async (req, res) => {
+	const { units } = await Build.findOne();
+	const vehUnits = units.vehUnits;
+	const stats = req.stats;
+		//update attack power stats
+		calcAttackPower();
+		// updates win/lose outcomes
+		calcWinLoss();
+		res.render("build/vehicleUnits", {vehUnits, stats});
+	})
+);
+
+router.post(`/vehicle_units`, validateVehUnitsSchema, catchAsync( async (req, res) =>{
+	updateUnitsDb(req.body, `units`, `vehUnits`);
+
+	res.redirect(`/vehicle_units`);
+}));
+
+router.get("/infantry_units", catchAsync( async (req, res) => {
+		const { units } = await Build.findOne();
+		const infUnits = units.infUnits;
+		const stats = req.stats;
+		//update attack power stats
+		calcAttackPower();
+		// updates win/lose outcomes
+		calcWinLoss();
+		res.render("build/infantryUnits", {infUnits, stats});
+	})
+);
+
+router.post(`/infantry_units`, validateInfUnitsSchema, catchAsync( async (req, res) =>{
+	updateUnitsDb(req.body, `units`, `infUnits`);
+
+	res.redirect(`/infantry_units`);
+}));
+
+router.get("/missiles", catchAsync( async (req, res) => {
+		const { missiles } = await Build.findOne();	
+		const stats = req.stats;
+		res.render("build/missiles", {missiles, stats});
+	})
+);
+
+router.post(`/missiles`, validateMissileSchema, catchAsync( async (req, res) =>{
+	updateBldMisDb(req.body, `missiles`);
+	res.redirect(`/missiles`);
+}));
+
+router.get("/satellite", catchAsync( async (req, res) => {
+	const {satellite} = await Build.findOne();
+	const stats = req.stats;
+		res.render("build/sats", {satellite, stats});
+	})
+);
+
+router.post(`/satellite`, catchAsync( async (req, res) =>{
+	const updateSat = await Build.findOne();
+	for (let key of Object.keys(updateSat.satellite)){
+		updateSat.satellite[key].amount = 0;
+		if (req.body.selected === key){
+			updateSat.satellite[key].amount = 1;
+		};
+	};
+	await updateSat.save();
+	res.redirect(`/satellite`);
+}));
+
+router.get(`/reset`, (req, res) =>{
+	const stats = req.stats;
+	res.render(`build/reset`, {stats});
+})
+
+router.post(`/reset`, catchAsync( async (req, res) =>{
+	await Build.deleteMany({});
+	await Enemy.deleteMany({});
+	const build = new Build();
+	const enemy = new Enemy();
+	await build.save();
+	await enemy.save();
+	res.redirect(`/home`);
+}));
+
+// catch all route
+router.all(`*`, (req, res, next) =>{
+	next(new ExpressError(`Page Not Found`, 404));
+})
+
+module.exports = router;

@@ -1,0 +1,73 @@
+<%- layout("layout/boilerplate") %> 
+<div class="container h-100">
+    <div class="row justify-content-around h-100">
+        <h2>Insert Unit Reports</h2>
+        <div class="col-2">
+            <table class="table table-hover">
+                <thead>
+                    
+                    <tr class="">
+                        <th scope="col">Name</th>
+                        <th scope="col" colspan="">Low Amount</th>
+                        <th scope="col">High Amount</th>
+
+                    </tr>
+                </thead>
+                <form action="/air_units" method="POST">
+                <tbody>
+                    <% for (let key of Object.keys(units.seaUnits)){ %> 
+                        <tr>
+                            <th scope="row"><%=units.seaUnits[key].name %></th>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                        </tr>
+                        <% } %> 
+                </tbody>
+                <tbody>
+                    <% for (let key of Object.keys(units.airUnits)){ %> 
+                        <tr>
+                            <th scope="row"><%=units.airUnits[key].name %></th>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                        </tr>
+                        <% } %> 
+                </tbody>
+              </table>
+        </div>
+        <div class="col-2">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="">
+                        <th scope="col">Name</th>
+                        <th scope="col" colspan="">Low Amount</th>
+                        <th scope="col">High Amount</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    <% for (let key of Object.keys(units.vehUnits)){ %> 
+                        <tr>
+                            <th scope="row"><%=units.vehUnits[key].name %></th>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                        </tr>
+                        <% } %> 
+                </tbody>
+                <tbody>
+                    <% for (let key of Object.keys(units.infUnits)){ %> 
+                        <tr>
+                            <th scope="row"><%=units.infUnits[key].name %></th>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                        </tr>
+                        <% } %> 
+                </tbody>
+              </table>
+
+        </div>
+        <div class="d-grid">
+            <button type="submit" class="btn btn-secondary">Add Units</button>
+        </div>
+    </form>
+    </div>
+</div>

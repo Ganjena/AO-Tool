@@ -1,0 +1,36 @@
+<%- layout("layout/boilerplate") %> 
+<div class="container h-100">
+    <div class="row justify-content-around h-100">
+        <div class="col-8">
+            <table class="table table-hover">
+                <thead>
+                    <tr class="">
+                        <th scope="col">Name</th>
+                        <th scope="col" colspan="2">Price</th>
+                        <th scope="col">Att/Life</th>
+                        <th scope="col">Targets</th> 
+                        <th scope="col">Owned</th> 
+                        <th scope="col">Build</th> 
+                    </tr>
+                </thead>
+                <form action="/infantry_units" method="POST">
+                <tbody>
+                    <% for (let key of Object.keys(infUnits)){ %> 
+                        <tr>
+                            <th scope="row"><%=infUnits[key].name %></th>
+                            <td colspan="2"><%=`$${infUnits[key].price}`%></td>
+                            <td colspan=""><%=`${infUnits[key].attack}/${infUnits[key].defense}`%></td>
+                            <td colspan=""><%=infUnits[key].targets%></td>
+                            <td colspan=""><%=infUnits[key].amount%></td>
+                            <td><input type="text" name="<%=key%>[amount]"></td>
+                        </tr>
+                        <% } %> 
+                </tbody>
+              </table>
+              <div class="d-grid">
+                <button type="submit" class="btn btn-secondary">Add Units</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>

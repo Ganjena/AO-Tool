@@ -1,0 +1,65 @@
+<%- layout("layout/boilerplate") %> 
+<div class="container h-100">
+    <div class="row justify-content-around h-100">
+        <div class="col-8">
+            <h3>Power/Land Calculator</h3>
+            <h6>- If there are no figures here, update the enemy buildings page</h4>
+            <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Amount</th>
+                    <th scope="col">Buildings</th>
+                    <th scope="col">Free Land</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Best Case:</th>
+                    <td><%=enemySetup.stats.minBuildings%></td>
+                    <td><%=enemySetup.stats.maxFreeLand%> m2</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Worst Case:</th>
+                    <td><%=enemySetup.stats.maxBuildings%></td>
+                    <td><%=enemySetup.stats.minFreeLand%> m2</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Likley:</th>
+                    <td colspan=""><%=enemySetup.stats.likleyBuildings%></td>
+                    <td colspan=""><%=enemySetup.stats.likleyFreeLand%> m2</td>
+                  </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row justify-content-center h-100">
+      <div class="col-4">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col"></th>
+                    <th scope="col">Power</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Best Case:</th>
+                    <td><%=enemySetup.stats.minPower%>%</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Worst Case:</th>
+                    <td><%=enemySetup.stats.maxPower%>%</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Likley:</th>
+                    <td colspan=""><%=enemySetup.stats.likleyPower%>%</td>
+                  </tr>
+            </tbody>
+        </table>
+      </div>
+      <div class="col-3 d-flex align-items-center justify-content-center">
+        <h5>PPE Active? <%=enemySetup.ppeActive === 0 ? `NO` : `YES`%></h4>
+      </div>     
+    </div>
+</div>
+

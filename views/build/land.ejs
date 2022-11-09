@@ -1,0 +1,16 @@
+<%- layout("layout/boilerplate") %> 
+<div class="container h-100">
+    <div class="row justify-content-around h-100">
+        <div class="col-8">
+            <form action="/land" method="POST">
+                <div class="mb-3 mt-5">
+                  <label class="form-label">Enter amount of land</label>
+                  <input class="form-control"  name="land">
+                </div>
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-secondary">Add Land</button>
+                </div>
+              </form>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,158 @@
+<%- layout("layout/boilerplate") %> 
+<div class="container">
+    <div class="row justify-content-around">
+        <div class="col-12">
+            <form action="/enemy" method="POST">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Units</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Buildings</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                      <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="contact" aria-selected="false">Land Research</button>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Min Amount</th>
+                                            <th scope="col">Max Amount</th>
+                                        </tr>
+                                    </thead>                             
+                                    <tbody>
+                                        <% for (let key of Object.keys(units.seaUnits)){ %> 
+                                        <tr>
+                                            <th scope="row"><%=units.seaUnits[key].name %></th>
+                                            <td><input type="text" name="seaUnits[<%=key%>][minAmount]" placeholder="<%=units.seaUnits[key].minAmount%>"></td>
+                                            <td><input type="text" name="seaUnits[<%=key%>][maxAmount]" placeholder="<%=units.seaUnits[key].maxAmount%>"></td>
+                                        </tr>
+                                        <% } %> 
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Min Amount</th>
+                                            <th scope="col">Max Amount</th>
+                                        </tr>
+                                    </thead>                             
+                                    <tbody>
+                                        <% for (let key of Object.keys(units.airUnits)){ %> 
+                                        <tr>
+                                            <th scope="row"><%=units.airUnits[key].name %></th>
+                                            <td><input type="text" name="airUnits[<%=key%>][minAmount]" placeholder="<%=units.airUnits[key].minAmount%>"></td>
+                                            <td><input type="text" name="airUnits[<%=key%>][maxAmount]" placeholder="<%=units.airUnits[key].maxAmount%>"></td>
+                                        </tr>
+                                        <% } %> 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Min Amount</th>
+                                            <th scope="col">Max Amount</th>
+                                        </tr>
+                                    </thead>                             
+                                    <tbody>
+                                        <% for (let key of Object.keys(units.vehUnits)){ %> 
+                                        <tr>
+                                            <th scope="row"><%=units.vehUnits[key].name %></th>
+                                            <td><input type="text" name="vehUnits[<%=key%>][minAmount]" placeholder="<%=units.vehUnits[key].minAmount%>"></td>
+                                            <td><input type="text" name="vehUnits[<%=key%>][maxAmount]" placeholder="<%=units.vehUnits[key].maxAmount%>"></td>
+                                        </tr>
+                                        <% } %> 
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-6">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Min Amount</th>
+                                            <th scope="col">Max Amount</th>
+                                        </tr>
+                                    </thead>                             
+                                    <tbody>
+                                        <% for (let key of Object.keys(units.infUnits)){ %> 
+                                        <tr>
+                                            <th scope="row"><%=units.infUnits[key].name %></th>
+                                            <td><input type="text" name="infUnits[<%=key%>][minAmount]" placeholder="<%=units.infUnits[key].minAmount%>"></td>
+                                            <td><input type="text" name="infUnits[<%=key%>][maxAmount]" placeholder="<%=units.infUnits[key].maxAmount%>"></td>
+                                        </tr>
+                                        <% } %> 
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                        <div class="row">
+                            <div class="col-12">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr class="">
+                                            <th scope="col">Name</th>
+                                            <th scope="col">Min Amount</th>
+                                            <th scope="col">Max Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <%for (let key of Object.keys(buildings)){%>
+                                            <tr>
+                                                <th scope="row"><%= buildings[key].name %></th>
+                                                <td><input type="text" name="buildings[<%=key%>][minAmount]" placeholder="<%=buildings[key].minAmount%>"></td>
+                                                <td><input type="text" name="buildings[<%=key%>][maxAmount]" placeholder="<%=buildings[key].maxAmount%>"></td>
+                                            </tr>
+                                        <%}%>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+                        <div class="row justify-content-around">
+                            <div class="col-8">
+                                <div class="mb-3 mt-5">
+                                    <label class="form-label">Enter amount of land</label>
+                                    <input class="form-control"  name="land[amount]" placeholder="<%=land%>">
+                                </div>
+                                <div class="form-check">
+                                    <h4>PPE Active?</h4>
+                                    <input class="form-check-input" type="radio" name="ppeActive" id="flexRadioDefault1" value="1"<%if(ppeActive === 1){%>checked<%}%>>
+                                    <label class="form-check-label" for="flexRadioDefault1">
+                                      YES
+                                    </label>
+                                  </div>
+                                  <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="ppeActive" id="flexRadioDefault2" value="0"<%if(ppeActive === 0){%>checked<%}%>>
+                                    <label class="form-check-label" for="flexRadioDefault2">
+                                      NO
+                                    </label>
+                                </div>                                  
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2 col-6 mx-auto d-block">
+                    <button class="btn btn-secondary" type="submit">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
