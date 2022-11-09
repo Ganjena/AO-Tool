@@ -1,7 +1,21 @@
 Basic web based tool for an online Text based game called assault.online
 
-Currently running into bug with Joi Validation when submitting any of the forms results the joi validation fails with  " `valve` is not allowed". "valve" being the key for the object not the value it should be validating.
+Only basic functionality working atm
 
+v1:
+-Added Database
+-Added mongoose
+-Added user and build model
+-Connected ejs templating to DB, now showing DB values
+
+v2:
+- Connected forms to update DB
+- function to calculate NW 
+- function to calculate land
+- function to calculate power
+- added reset button
+
+v3:
 added Joi (server side validation)
 
 
