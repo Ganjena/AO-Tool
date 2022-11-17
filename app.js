@@ -32,7 +32,8 @@ async function status(req, res, next){
 	//passes miscStat to route for ejs to work with
 	req.stats = stats.miscStat;
 	// trigger next middleware
-	next();
+	next();   
+	
 }
 
 app.use(status);
