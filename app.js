@@ -1,4 +1,9 @@
 const express = require("express");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require(`passport`);
+const LocalStrategy = require(`passport-local`);
+const User = require(`./models/user.js`);
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
@@ -22,6 +27,26 @@ db.once("open", () => {
 	console.log("Database connected");
 });
 
+// add sessions to express
+const sessionConfig = {
+	secret: `thisshouldbeabettersecret`,
+	resave: false,
+	saveUninitialized: true,
+	cookie: {
+		httpOnly: true,
+		expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+		maxAge: 1000 * 60 * 60 * 24 * 7,
+	},
+};
+app.use(session(sessionConfig));
+app.use(flash());
+//passport config
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 async function status(req, res, next){
 	// finds model in db
 	const stats = await Build.findOne(); 
@@ -29,11 +54,15 @@ async function status(req, res, next){
 	stats.miscStat.totalNW = calcNw(stats); 
 	stats.miscStat.power = calcPower(stats); 
 	await stats.save(); 
-	//passes miscStat to route for ejs to work with
-	req.stats = stats.miscStat;
+	//passes miscStat to all routes and boilerplate for ejs to work with
+	res.locals.totalNW = stats.miscStat.totalNW;
+	res.locals.land = stats.miscStat.land;
+	res.locals.power = stats.miscStat.power;
+	//add flash messages to each route
+	res.locals.success = req.flash(`success`);
+	res.locals.error = req.flash(`error`);
 	// trigger next middleware
 	next();   
-	
 }
 
 app.use(status);
@@ -43,10 +72,9 @@ app.use(`/`, routes);
 
 // error handler middleware
 app.use((err, req, res, next) =>{
-	const stats = req.stats;
 	const { statusCode = 500 } = err;
 	if (!err.message) err.message = `Oh No, Something Went Wrong!`;
-	res.status(statusCode).render(`../utilities/error.ejs`, { stats, err});
+	res.status(statusCode).render(`../utilities/error.ejs`, {err});
 });
 
 app.listen(3000, () => {

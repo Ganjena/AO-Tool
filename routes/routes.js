@@ -39,8 +39,7 @@ router.get("/", catchAsync( async (req, res) => {
 );
 
 router.get("/home", (req, res) => {
-	const stats = req.stats;
-	res.render("home", {stats});
+	res.render("home");
 });
 
 router.get(`/enemy`, catchAsync( async (req, res) => {
@@ -49,8 +48,7 @@ router.get(`/enemy`, catchAsync( async (req, res) => {
 	//update enemy power equations and add them to database
 	calcEnemyPower();
 	const {units, buildings, land, ppeActive} = await Enemy.findOne();
-	const stats = req.stats;
-	res.render(`enemy`, {stats, units, buildings, land, ppeActive});
+	res.render(`enemy`, {units, buildings, land, ppeActive});
 })
 );
 
@@ -68,30 +66,26 @@ router.post(`/enemy`, validateEnemySchema, catchAsync( async (req, res) =>{
 );
 
 router.get("/attack", catchAsync( async(req, res) => {
-	const stats = req.stats;
 	const {attackStats} = await Enemy.findOne({});
 	const build = await Build.findOne({});
 	//update and check all attack powers
-	res.render("attackCalc", {stats, attackStats, build});
+	res.render("attackCalc", {attackStats, build});
 })
 );
 
 router.get("/power", catchAsync( async (req, res) => {
-	const stats = req.stats;
 	const enemySetup = await Enemy.findOne({});
-	res.render("powerCalc", {stats, enemySetup});
+	res.render("powerCalc", {enemySetup});
 })
 );
 
 router.get("/stats", (req, res) => {
-	const stats = req.stats;
-	res.render("stats", {stats});
+	res.render("stats");
 });
 
 router.get("/research", catchAsync( async (req, res) => {
 	const {research } = await Build.findOne();
-	const stats = req.stats;
-		res.render("build/research", {research, stats});
+		res.render("build/research", {research});
 	})
 );
 
@@ -109,8 +103,7 @@ router.post(`/research`, catchAsync( async (req, res) => {
 }));
 
 router.get("/land", catchAsync( async (req, res) => {
-		const stats = req.stats;
-		res.render("build/land", {stats});
+		res.render("build/land");
 	})
 );
 
@@ -123,8 +116,7 @@ router.post(`/land`, validateLandSchema, catchAsync( async (req, res) => {
 
 router.get("/buildings", catchAsync( async (req, res) => {
 	const {buildings} = await Build.findOne();
-	const stats = req.stats;
-	res.render("build/buildings", {buildings, stats});
+	res.render("build/buildings", {buildings});
 	})
 );
 
@@ -137,12 +129,11 @@ router.post(`/buildings`, validateBuildingSchema, catchAsync( async (req, res) =
 router.get("/sea_units", catchAsync( async (req, res) => {
 		const {units} = await Build.findOne();
 		const seaUnits = units.seaUnits;
-		const stats = req.stats;
 			//update attack power stats
 	calcAttackPower();
 	// updates win/lose outcomes
 	calcWinLoss();
-		res.render("build/seaUnits", {seaUnits, stats});
+		res.render("build/seaUnits", {seaUnits});
 	})
 );
 
@@ -154,12 +145,11 @@ router.post(`/sea_units`, validateSeaUnitsSchema, catchAsync( async (req, res) =
 router.get("/air_units", catchAsync( async (req, res) => {
 	const { units } = await Build.findOne();
 	const airUnits = units.airUnits;
-	const stats = req.stats;
 		//update attack power stats
 		calcAttackPower();
 		// updates win/lose outcomes
 		calcWinLoss();
-		res.render("build/airUnits", {airUnits, stats});
+		res.render("build/airUnits", {airUnits});
 	})
 );
 
@@ -171,12 +161,11 @@ router.post(`/air_units`, validateAirUnitsSchema, catchAsync( async (req, res) =
 router.get("/vehicle_units", catchAsync( async (req, res) => {
 	const { units } = await Build.findOne();
 	const vehUnits = units.vehUnits;
-	const stats = req.stats;
 		//update attack power stats
 		calcAttackPower();
 		// updates win/lose outcomes
 		calcWinLoss();
-		res.render("build/vehicleUnits", {vehUnits, stats});
+		res.render("build/vehicleUnits", {vehUnits});
 	})
 );
 
@@ -189,12 +178,11 @@ router.post(`/vehicle_units`, validateVehUnitsSchema, catchAsync( async (req, re
 router.get("/infantry_units", catchAsync( async (req, res) => {
 		const { units } = await Build.findOne();
 		const infUnits = units.infUnits;
-		const stats = req.stats;
 		//update attack power stats
 		calcAttackPower();
 		// updates win/lose outcomes
 		calcWinLoss();
-		res.render("build/infantryUnits", {infUnits, stats});
+		res.render("build/infantryUnits", {infUnits});
 	})
 );
 
@@ -206,8 +194,7 @@ router.post(`/infantry_units`, validateInfUnitsSchema, catchAsync( async (req, r
 
 router.get("/missiles", catchAsync( async (req, res) => {
 		const { missiles } = await Build.findOne();	
-		const stats = req.stats;
-		res.render("build/missiles", {missiles, stats});
+		res.render("build/missiles", {missiles});
 	})
 );
 
@@ -218,8 +205,7 @@ router.post(`/missiles`, validateMissileSchema, catchAsync( async (req, res) =>{
 
 router.get("/satellite", catchAsync( async (req, res) => {
 	const {satellite} = await Build.findOne();
-	const stats = req.stats;
-		res.render("build/sats", {satellite, stats});
+		res.render("build/sats", {satellite});
 	})
 );
 
@@ -236,8 +222,7 @@ router.post(`/satellite`, catchAsync( async (req, res) =>{
 }));
 
 router.get(`/reset`, (req, res) =>{
-	const stats = req.stats;
-	res.render(`build/reset`, {stats});
+	res.render(`build/reset`);
 })
 
 router.post(`/reset`, catchAsync( async (req, res) =>{
