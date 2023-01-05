@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
 		ref: `buildSchema`
 	},
 	enemy: {
-		type: mongoose.Schema.Types.ObjectId,
+		type: mongoose.Schema.Types.ObjectId, 
 		ref: `enemySchema`
 	}
 });
