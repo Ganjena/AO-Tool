@@ -1,6 +1,8 @@
 const express = require(`express`);
 const router = express.Router();
+const passport = require(`passport`);
 
+const User = require(`../models/user.js`);
 const Build = require(`../models/buildSchema.js`);
 const Enemy = require(`../models/enemySchema.js`);
 
@@ -33,16 +35,46 @@ const {
     calcEnemyDef
 	} = require(`../functions/enemyCalcs.js`);
 
+	// passport middleware checks if current user is logged in
+const isLoggedIn = (req, res, next) =>{
+	if(!req.isAuthenticated()){
+		req.flash(`error`, `You must be signed in to view this page!`);
+		return res.redirect(`/`);
+	}
+	next()
+}
+
 router.get("/", catchAsync( async (req, res) => {
 	res.render("index");
 })
 );
 
-router.get("/home", (req, res) => {
+router.post(`/register`, catchAsync( async (req, res) =>{
+	try{
+		const {username, password} = req.body;
+		const user = new User({username});
+		const registeredUser = await User.register(user, password);
+		req.login(registeredUser, err =>{
+			if(err) return next (err)
+			req.flash(`success`, `Welcome to AoTool!`);
+			res.redirect(`/home`);
+		});
+	} catch(e){
+		req.flash(`error`, e.message);
+		res.redirect(`/`);
+	}
+}));
+
+router.post(`/login`, passport.authenticate(`local`, {failureFlash: true, failureRedirect: `/`}), catchAsync( async (req, res) =>{
+	req.flash(`success`, `Welcome back ${req.user.username}`);
+	res.redirect(`/home`);
+}));
+
+router.get("/home", isLoggedIn, (req, res) => {
 	res.render("home");
 });
 
-router.get(`/enemy`, catchAsync( async (req, res) => {
+router.get(`/enemy`, isLoggedIn, catchAsync( async (req, res) => {
 	// update enemy land equations and add them to database
 	calcEnemyLand();
 	//update enemy power equations and add them to database
@@ -52,7 +84,7 @@ router.get(`/enemy`, catchAsync( async (req, res) => {
 })
 );
 
-router.post(`/enemy`, validateEnemySchema, catchAsync( async (req, res) =>{
+router.post(`/enemy`, isLoggedIn, validateEnemySchema, catchAsync( async (req, res) =>{
 	// take enemy input from user and add it to the database
 	updateEnemy(req.body);
 	// update enemy land equations and add them to database
@@ -65,7 +97,7 @@ router.post(`/enemy`, validateEnemySchema, catchAsync( async (req, res) =>{
 })
 );
 
-router.get("/attack", catchAsync( async(req, res) => {
+router.get("/attack", isLoggedIn, catchAsync( async(req, res) => {
 	const {attackStats} = await Enemy.findOne({});
 	const build = await Build.findOne({});
 	//update and check all attack powers
@@ -73,23 +105,23 @@ router.get("/attack", catchAsync( async(req, res) => {
 })
 );
 
-router.get("/power", catchAsync( async (req, res) => {
+router.get("/power", isLoggedIn, catchAsync( async (req, res) => {
 	const enemySetup = await Enemy.findOne({});
 	res.render("powerCalc", {enemySetup});
 })
 );
 
-router.get("/stats", (req, res) => {
+router.get("/stats", isLoggedIn, (req, res) => {
 	res.render("stats");
 });
 
-router.get("/research", catchAsync( async (req, res) => {
+router.get("/research", isLoggedIn, catchAsync( async (req, res) => {
 	const {research } = await Build.findOne();
 		res.render("build/research", {research});
 	})
 );
 
-router.post(`/research`, catchAsync( async (req, res) => {
+router.post(`/research`, isLoggedIn, catchAsync( async (req, res) => {
 	const updateDb = await Build.findOne();
 	for (let key of Object.keys(req.body)){
 		if(key === `add`){
@@ -102,31 +134,31 @@ router.post(`/research`, catchAsync( async (req, res) => {
 	res.redirect(`/research`);
 }));
 
-router.get("/land", catchAsync( async (req, res) => {
+router.get("/land", isLoggedIn, catchAsync( async (req, res) => {
 		res.render("build/land");
 	})
 );
 
-router.post(`/land`, validateLandSchema, catchAsync( async (req, res) => {
+router.post(`/land`, isLoggedIn, validateLandSchema, catchAsync( async (req, res) => {
 	const updateDb = await Build.findOne();
 	updateDb.miscStat.land = req.body.land;
 	await updateDb.save();
 	res.redirect(`/land`);
 }));
 
-router.get("/buildings", catchAsync( async (req, res) => {
+router.get("/buildings", isLoggedIn, catchAsync( async (req, res) => {
 	const {buildings} = await Build.findOne();
 	res.render("build/buildings", {buildings});
 	})
 );
 
-router.post(`/buildings`, validateBuildingSchema, catchAsync( async (req, res) =>{
+router.post(`/buildings`, isLoggedIn, validateBuildingSchema, catchAsync( async (req, res) =>{
 	updateBldMisDb(req.body, `buildings`);
 	res.redirect(`/buildings`);
 })
 );
 
-router.get("/sea_units", catchAsync( async (req, res) => {
+router.get("/sea_units", isLoggedIn, catchAsync( async (req, res) => {
 		const {units} = await Build.findOne();
 		const seaUnits = units.seaUnits;
 			//update attack power stats
@@ -137,12 +169,12 @@ router.get("/sea_units", catchAsync( async (req, res) => {
 	})
 );
 
-router.post(`/sea_units`, validateSeaUnitsSchema, catchAsync( async (req, res) =>{
+router.post(`/sea_units`, isLoggedIn, validateSeaUnitsSchema, catchAsync( async (req, res) =>{
 	updateUnitsDb(req.body, `units`, `seaUnits`);
 	res.redirect(`/sea_units`);
 }));
 
-router.get("/air_units", catchAsync( async (req, res) => {
+router.get("/air_units", isLoggedIn, catchAsync( async (req, res) => {
 	const { units } = await Build.findOne();
 	const airUnits = units.airUnits;
 		//update attack power stats
@@ -153,12 +185,12 @@ router.get("/air_units", catchAsync( async (req, res) => {
 	})
 );
 
-router.post(`/air_units`, validateAirUnitsSchema, catchAsync( async (req, res) =>{
+router.post(`/air_units`, isLoggedIn, validateAirUnitsSchema, catchAsync( async (req, res) =>{
 	updateUnitsDb(req.body, `units`, `airUnits`);
 	res.redirect(`/air_units`);
 }));
 
-router.get("/vehicle_units", catchAsync( async (req, res) => {
+router.get("/vehicle_units", isLoggedIn, catchAsync( async (req, res) => {
 	const { units } = await Build.findOne();
 	const vehUnits = units.vehUnits;
 		//update attack power stats
@@ -169,13 +201,13 @@ router.get("/vehicle_units", catchAsync( async (req, res) => {
 	})
 );
 
-router.post(`/vehicle_units`, validateVehUnitsSchema, catchAsync( async (req, res) =>{
+router.post(`/vehicle_units`, isLoggedIn, validateVehUnitsSchema, catchAsync( async (req, res) =>{
 	updateUnitsDb(req.body, `units`, `vehUnits`);
 
 	res.redirect(`/vehicle_units`);
 }));
 
-router.get("/infantry_units", catchAsync( async (req, res) => {
+router.get("/infantry_units", isLoggedIn, catchAsync( async (req, res) => {
 		const { units } = await Build.findOne();
 		const infUnits = units.infUnits;
 		//update attack power stats
@@ -186,30 +218,30 @@ router.get("/infantry_units", catchAsync( async (req, res) => {
 	})
 );
 
-router.post(`/infantry_units`, validateInfUnitsSchema, catchAsync( async (req, res) =>{
+router.post(`/infantry_units`, isLoggedIn, validateInfUnitsSchema, catchAsync( async (req, res) =>{
 	updateUnitsDb(req.body, `units`, `infUnits`);
 
 	res.redirect(`/infantry_units`);
 }));
 
-router.get("/missiles", catchAsync( async (req, res) => {
+router.get("/missiles", isLoggedIn, catchAsync( async (req, res) => {
 		const { missiles } = await Build.findOne();	
 		res.render("build/missiles", {missiles});
 	})
 );
 
-router.post(`/missiles`, validateMissileSchema, catchAsync( async (req, res) =>{
+router.post(`/missiles`, isLoggedIn, validateMissileSchema, catchAsync( async (req, res) =>{
 	updateBldMisDb(req.body, `missiles`);
 	res.redirect(`/missiles`);
 }));
 
-router.get("/satellite", catchAsync( async (req, res) => {
+router.get("/satellite", isLoggedIn, catchAsync( async (req, res) => {
 	const {satellite} = await Build.findOne();
 		res.render("build/sats", {satellite});
 	})
 );
 
-router.post(`/satellite`, catchAsync( async (req, res) =>{
+router.post(`/satellite`, isLoggedIn, catchAsync( async (req, res) =>{
 	const updateSat = await Build.findOne();
 	for (let key of Object.keys(updateSat.satellite)){
 		updateSat.satellite[key].amount = 0;
@@ -221,11 +253,11 @@ router.post(`/satellite`, catchAsync( async (req, res) =>{
 	res.redirect(`/satellite`);
 }));
 
-router.get(`/reset`, (req, res) =>{
+router.get(`/reset`, isLoggedIn, (req, res) =>{
 	res.render(`build/reset`);
 })
 
-router.post(`/reset`, catchAsync( async (req, res) =>{
+router.post(`/reset`, isLoggedIn, catchAsync( async (req, res) =>{
 	await Build.deleteMany({});
 	await Enemy.deleteMany({});
 	const build = new Build();
@@ -233,6 +265,14 @@ router.post(`/reset`, catchAsync( async (req, res) =>{
 	await build.save();
 	await enemy.save();
 	res.redirect(`/home`);
+}));
+
+router.get(`/logout`, catchAsync( async (req, res) =>{
+	req.logout(function(err) {
+		if (err) { return next(err); }
+		req.flash('success', "You have been logged out.");
+		res.redirect('/');
+	  });
 }));
 
 // catch all route

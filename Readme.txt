@@ -21,6 +21,6 @@ added Joi (server side validation)
 v4:
 added res.local param to all pages instead of passing values into each and every route
 added flash message ability
-add basic authentication ***
+add basic login/logout authentication
 
 
