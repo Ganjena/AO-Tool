@@ -3,7 +3,7 @@ const session = require("express-session");
 const flash = require("connect-flash");
 const passport = require(`passport`);
 const LocalStrategy = require(`passport-local`);
-const User = require(`./models/user.js`);
+const User = require(`./models/userSchema.js`);
 const path = require("path");
 const ejsMate = require("ejs-mate");
 const mongoose = require("mongoose");
@@ -48,8 +48,14 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 async function status(req, res, next){
+	if(!req.user){
+		//add flash messages to each route
+		res.locals.success = req.flash(`success`);
+		res.locals.error = req.flash(`error`);
+		next();
+	}else{
 	// finds model in db
-	const stats = await Build.findOne(); 
+	const stats = await Build.findById(req.user.build._id);
 	//makes some calculation and updates the model
 	stats.miscStat.totalNW = calcNw(stats); 
 	stats.miscStat.power = calcPower(stats); 
@@ -63,6 +69,7 @@ async function status(req, res, next){
 	res.locals.error = req.flash(`error`);
 	// trigger next middleware
 	next();   
+	}
 }
 
 app.use(status);

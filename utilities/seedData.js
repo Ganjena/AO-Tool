@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Build = require(`../models/buildSchema.js`);
 const Enemy = require(`../models/enemySchema.js`);
+const User = require(`../models/userSchema.js`);
 
 
 
@@ -15,14 +16,10 @@ db.once("open", () => {
 
 
 async function run(){
-// Sseed basic setup datas
+// removes all data from DB
 await Build.deleteMany({});
 await Enemy.deleteMany({});
-const build = new Build();
-const enemy = new Enemy();
-await build.save();
-await enemy.save();
-
+await User.deleteMany({});
 }
 
 run();

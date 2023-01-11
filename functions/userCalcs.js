@@ -2,8 +2,8 @@ const Build = require(`../models/buildSchema.js`);
 const Enemy = require(`../models/enemySchema.js`)
 
 //updates units from unit pages
-async function updateUnitsDb(update, group, type){
-	const updateBuild = await Build.findOne();
+async function updateUnitsDb(update, group, type, id){
+	const updateBuild = await Build.findById(id);
 	for (let keys of Object.keys(update)){
 		let num = parseInt(update[keys].amount);
 		if(num){			
@@ -15,8 +15,8 @@ async function updateUnitsDb(update, group, type){
 	await updateBuild.save();
 }
 //updates DB from buildings page
-async function updateBldMisDb(update, type){
-	const updateBuild = await Build.findOne();
+async function updateBldMisDb(update, type, id){
+	const updateBuild = await Build.findById(id);
 	for (let keys of Object.keys(update)){
 		let num = parseInt(update[keys].amount);
 		if(num || num == 0){
@@ -106,8 +106,8 @@ function calcPower(build){
 
 }
 
-async function calcAttackPower(){
-	const build = await Build.findOne({});
+async function calcAttackPower(id){
+	const build = await Build.findById(id);
 	const units = build.units;
 	let vsSea = 0;
 	let vsAir = 0;
@@ -336,9 +336,9 @@ async function calcAttackPower(){
 	await build.save();
 }
 
-async function calcWinLoss(){
-	const build = await Build.findOne({});
-	const enemy = await Enemy.findOne({});
+async function calcWinLoss(buildId, enemyId){
+	const build = await Build.findById(buildId);
+	const enemy = await Enemy.findById(enemyId);
 	const {attackStats} = build;
 
 	let defenceVsSea = 0;

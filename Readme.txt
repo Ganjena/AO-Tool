@@ -23,4 +23,10 @@ added res.local param to all pages instead of passing values into each and every
 added flash message ability
 add basic login/logout authentication
 
+v5:
+added account seperation
+added route protection to all routes
+added reset account
+added delete account
+
 

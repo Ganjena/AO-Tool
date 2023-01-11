@@ -3,8 +3,8 @@ const Enemy = require(`../models/enemySchema.js`)
 
 
 // calculate the enemies power
-async function calcEnemyPower(){
-	const enemy = await Enemy.findOne({});
+async function calcEnemyPower(id){
+	const enemy = await Enemy.findById(id);
 	let maxPowerUsed = 0;
 	let minPowerUsed = 0;
 	let maxPowerProduced = 0;
@@ -53,8 +53,8 @@ async function calcEnemyPower(){
 }
 
 	// take enemy input from user and add it to the database
-    async function updateEnemy(enemySetup){
-        const enemy = await Enemy.findOne({});
+    async function updateEnemy(id, enemySetup){
+        const enemy = await Enemy.findById(id);
         for (let group of Object.keys(enemySetup)){
             if(group === `seaUnits`){
                 for (unit of Object.keys(enemySetup[group])){
@@ -107,8 +107,8 @@ async function calcEnemyPower(){
     };
 
     //calculate enemy land
-async function calcEnemyLand(){
-	const enemy = await Enemy.findOne({});
+async function calcEnemyLand(id){
+	const enemy = await Enemy.findById(id);
 	const {buildings, stats, land} = enemy;
 	// add up min/max amounts of buildings
 	let minBuildings = 0;
@@ -128,8 +128,8 @@ async function calcEnemyLand(){
 }
 
 //calculates enemy AP in defense
-async function calcEnemyDef(){
-	const enemy = await Enemy.findOne({});
+async function calcEnemyDef(id){
+	const enemy = await Enemy.findById(id);
 	const buildings = enemy.buildings;
 	const units = enemy.units;
 	let maxVsSea = 0;
