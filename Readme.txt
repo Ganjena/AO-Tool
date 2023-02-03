@@ -28,5 +28,6 @@ added account seperation
 added route protection to all routes
 added reset account
 added delete account
-
+added enviroment vairables for secrecy
+added gitignore
 

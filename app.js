@@ -1,3 +1,7 @@
+if (process.env.NODE_ENV !== `production`){
+	require(`dotenv`).config();
+}
+
 const express = require("express");
 const session = require("express-session");
 const flash = require("connect-flash");
@@ -19,7 +23,7 @@ app.set("views", path.join(__dirname, "views"));
 app.use(express.urlencoded({ extended: true }));
 
 
-mongoose.connect("mongodb://localhost:27017/AO_TOOL");
+mongoose.connect(process.env.DB_ADDRESS);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -29,7 +33,7 @@ db.once("open", () => {
 
 // add sessions to express
 const sessionConfig = {
-	secret: `thisshouldbeabettersecret`,
+	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
