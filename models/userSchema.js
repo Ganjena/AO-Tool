@@ -10,7 +10,22 @@ const UserSchema = new Schema({
 	enemy: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: `Enemy`,
-	}
+	},
+	email: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	username: {
+		type: String,
+		required: true,
+		unique: true
+	},
+	isAdmin: {
+		type: Boolean,
+		default: false
+	},
+	
 });
 
 UserSchema.plugin(passportLocalMongoose);

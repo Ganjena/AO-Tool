@@ -5,6 +5,8 @@ if (process.env.NODE_ENV !== `production`){
 const express = require("express");
 const session = require("express-session");
 const flash = require("connect-flash");
+// sanitize all query string in req.body, req.params etc to prevent sql injection
+const mongoSanitize = require('express-mongo-sanitize');
 const passport = require(`passport`);
 const LocalStrategy = require(`passport-local`);
 const User = require(`./models/userSchema.js`);
@@ -44,6 +46,7 @@ const sessionConfig = {
 };
 app.use(session(sessionConfig));
 app.use(flash());
+app.use(mongoSanitize());
 //passport config
 app.use(passport.initialize());
 app.use(passport.session());

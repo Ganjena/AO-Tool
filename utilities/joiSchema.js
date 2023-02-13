@@ -1,4 +1,28 @@
-const Joi = require("joi");
+const BaseJoi = require("joi");
+const sanitizeHtml = require(`sanitize-html`);
+
+//Joi extension to santize html and scripts from all inputs
+const extension = (joi) => ({
+    type: 'string',
+    base: joi.string(),
+    messages: {
+        'string.escapeHTML': '{{#label}} must not include HTML!'
+    },
+    rules: {
+        escapeHTML: {
+            validate(value, helpers) {
+                const clean = sanitizeHtml(value, {
+                    allowedTags: [],
+                    allowedAttributes: {},
+                });
+                if (clean !== value) return helpers.error('string.escapeHTML', { value })
+                return clean;
+            }
+        }
+    }
+});
+
+const Joi = BaseJoi.extend(extension);
 
 const enemySchema = Joi.object({
     seaUnits: Joi.object({
@@ -391,6 +415,13 @@ const landSchema = Joi.object({
     land: Joi.number().allow(null, ``).min(0)
 })
 
+const userSchema = Joi.object({
+    email: Joi.string().required().email({ minDomainSegments: 2 }).escapeHTML(),
+    username: Joi.string().required().escapeHTML(),
+    password: Joi.string().required().escapeHTML()
+    
+})
+
 module.exports = {
     enemySchema,
     buildingSchema,
@@ -399,6 +430,7 @@ module.exports = {
     vehUnitSchema,
     infUnitSchema,
     missileSchema,
-    landSchema
+    landSchema,
+    userSchema
 }
 

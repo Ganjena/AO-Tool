@@ -15,6 +15,7 @@ const {
 	validateVehUnitsSchema,
 	validateInfUnitsSchema,
 	validateMissileSchema,
+	validateUserSchema
 } = require(`../functions/validations.js`);
 
 const catchAsync = require(`../utilities/catchAsync.js`);
@@ -49,12 +50,12 @@ router.get("/", catchAsync( async (req, res) => {
 })
 );
 
-router.post(`/register`, catchAsync( async (req, res) =>{
+router.post(`/register`, validateUserSchema, catchAsync( async (req, res) =>{
 	try{
-		const {username, password} = req.body;
+		const {username, password, email} = req.body;
 		const build = new Build();
 		const enemy = new Enemy();
-		const user = new User({username});
+		const user = new User({username: username, email: email});
 		user.build = build;
 		user.enemy = enemy;
 		await build.save();

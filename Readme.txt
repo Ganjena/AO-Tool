@@ -30,4 +30,6 @@ added reset account
 added delete account
 added enviroment vairables for secrecy
 added gitignore
+added html and script sanitization
+added email to userSchema
 

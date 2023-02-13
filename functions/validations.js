@@ -8,7 +8,8 @@ const {
     vehUnitSchema,
     infUnitSchema,
     missileSchema,
-    landSchema
+    landSchema,
+	userSchema
 } = require(`../utilities/joiSchema.js`);
 
 
@@ -89,6 +90,16 @@ module.exports.validateMissileSchema = (req, res, next) =>{
 
 module.exports.validateLandSchema = (req, res, next) =>{
 	const {error} = landSchema.validate(req.body);
+	if (error){
+		const msg = error.details.map(el => el.message).join(``)
+		throw new ExpressError(msg, 400)
+	}else {
+		next();
+	}
+}
+
+module.exports.validateUserSchema = (req, res, next) =>{
+	const {error} = userSchema.validate(req.body);
 	if (error){
 		const msg = error.details.map(el => el.message).join(``)
 		throw new ExpressError(msg, 400)
