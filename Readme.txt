@@ -33,3 +33,9 @@ added gitignore
 added html and script sanitization
 added email to userSchema
 
+v6:
+added email verification
+=========
+added password change*
+added paddword reset*
+

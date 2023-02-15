@@ -1,6 +1,8 @@
 const express = require(`express`);
 const router = express.Router();
 const passport = require(`passport`);
+const sgMail = require('@sendgrid/mail');
+const crypto = require(`crypto`);
 
 const User = require(`../models/userSchema.js`);
 const Build = require(`../models/buildSchema.js`);
@@ -18,8 +20,14 @@ const {
 	validateUserSchema
 } = require(`../functions/validations.js`);
 
+const {
+	isVerified
+} = require(`../functions/user.js`);
+
 const catchAsync = require(`../utilities/catchAsync.js`);
 const ExpressError = require(`../utilities/ExpressError.js`);
+// SEND GRID email setup to verify users email address.
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
 
 const {
@@ -51,28 +59,76 @@ router.get("/", catchAsync( async (req, res) => {
 );
 
 router.post(`/register`, validateUserSchema, catchAsync( async (req, res) =>{
-	try{
 		const {username, password, email} = req.body;
 		const build = new Build();
 		const enemy = new Enemy();
-		const user = new User({username: username, email: email});
-		user.build = build;
-		user.enemy = enemy;
+		const user = new User({
+			build: build,
+			enemy: enemy,
+			username: username, 
+			email: email,
+			emailToken: crypto.randomBytes(64).toString(`hex`),
+			isVerified: false
+		});
+		// user.build = build;
+		// user.enemy = enemy;
 		await build.save();
 		await enemy.save();
-		const registeredUser = await User.register(user, password);
-		req.login(registeredUser, err =>{
-			if(err) return next (err)
-			req.flash(`success`, `Welcome to AoTool!`);
-			res.redirect(`/home`);
-		});
-	} catch(e){
-		req.flash(`error`, e.message);
-		res.redirect(`/`);
-	}
+		// const registeredUser = await User.register(user, password);
+		User.register(user, password, catchAsync( async (err,user) =>{
+			if(err){
+				req.flash(`error`, err.message);
+				return res.redirect(`/`);
+			}
+			const msg = {
+				to: user.email,
+				from: 'marc_rothmann@hotmail.co.uk', // Use the email address or domain you verified above
+				subject: 'AO Tool - Please verify your email address.',
+				text: `
+					Please copy and paste the link below to verify your account.
+					http://${req.headers.host}/verify-email?token=${user.emailToken}
+				`,
+				html: `
+				<h1> AO Tool</h1>
+				<p>Please click the link below to verify your acccount.</p>
+				<a href="http://${req.headers.host}/verify-email?token=${user.emailToken}">Verify your account.</a>
+				`,
+			  };
+			  try {
+				await sgMail.send(msg);
+				req.flash(`success`, `Thanks for registering. Please check your email to veify your account.`)
+				res.redirect(`/`);
+			  } catch (err){
+				req.flash(`error`, `Sorry, something went wrong! Please contact admin.`)
+				res.redirect(`/`)
+			  }
+		}));
 }));
 
-router.post(`/login`, passport.authenticate(`local`, {failureFlash: true, failureRedirect: `/`}), catchAsync( async (req, res) =>{
+//Email verification route
+router.get(`/verify-email`, catchAsync( async (req, res) => {
+	try {
+		const user = await User.findOne({ emailToken: req.query.token});
+		if (!user){
+			req.flash(`error`, `Token is invalid. Please contact admin`);
+			return res.redirect(`/`);
+		}
+		user.emailToken = null;
+		user.isVerified = true;
+		await user.save();
+		await req.login(user, async (err) => {
+			if (err) return next (err);
+			req.flash(`success`, `Welcome back ${user.username}`);
+			res.redirect(`/home`)
+		})
+	} catch (err){
+		req.flash(`error`, `Sorry, something went wrong! Please contact admin.`)
+		res.redirect(`/`)
+	  }
+}));
+
+router.post(`/login`,  passport.authenticate(`local`, {failureFlash: true, failureRedirect: `/`}), isVerified, catchAsync( async (req, res) =>{
+	console.log
 	req.flash(`success`, `Welcome back ${req.user.username}`);
 	res.redirect(`/home`);
 }));
