@@ -35,7 +35,6 @@ added email to userSchema
 
 v6:
 added email verification
-=========
-added password change*
-added paddword reset*
+added password change
+added password reset
 

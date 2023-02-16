@@ -127,6 +127,8 @@ router.get(`/verify-email`, catchAsync( async (req, res) => {
 	  }
 }));
 
+
+
 router.post(`/login`,  passport.authenticate(`local`, {failureFlash: true, failureRedirect: `/`}), isVerified, catchAsync( async (req, res) =>{
 	console.log
 	req.flash(`success`, `Welcome back ${req.user.username}`);
@@ -331,6 +333,89 @@ router.post(`/reset`, isLoggedIn, catchAsync( async (req, res) =>{
 	await enemy.save();
 	await user.save();
 	res.redirect(`/home`);
+}));
+
+router.get(`/reset-password`, isLoggedIn, catchAsync( async (req, res ) =>{
+	res.render(`resetPassword`);
+}));
+
+router.post(`/reset-password`, isLoggedIn, catchAsync( async (req, res ) =>{
+	const { oldPassword, newPassword, repeatPassword } = req.body;
+	if(newPassword === repeatPassword){
+		await req.user.changePassword(oldPassword, newPassword);
+		req.flash(`success`, `Password Changed`);
+		return res.redirect(`/home`);
+	}
+	req.flash(`error`, `New passwords do not match.`);
+	res.redirect(`/reset-password`);
+}));
+
+// lost password form - user enters email
+router.get(`/lost-password`, catchAsync( async (req, res) =>{
+	res.render(`lostPassword`);
+
+}));
+
+// if email matches DB, link to reset is set to user email
+router.post(`/lost-password`, catchAsync( async (req, res) =>{
+	const user = await User.findOne({email: req.body.email});
+	if (!user){
+		req.flash(`success`, `If a valid email was used, you will receive a reset link soon.`);
+		console.log(`no email found`);
+		return res.redirect(`/`);
+		
+	}
+	user.emailToken = crypto.randomBytes(64).toString(`hex`);
+	await user.save();
+	const msg = {
+		to: user.email,
+		from: 'marc_rothmann@hotmail.co.uk', // Use the email address or domain you verified above
+		subject: 'AO Tool - Reset password link',
+		text: `
+			Please copy and paste the link below to change your password.
+			http://${req.headers.host}/changePassword?token=${user.emailToken}
+		`,
+		html: `
+		<h1> AO Tool</h1>
+		<p>Please click the link below to change your password.</p>
+		<a href="http://${req.headers.host}/changePassword?token=${user.emailToken}">Change your password.</a>
+		`,
+	  };
+	  try {
+		await sgMail.send(msg);
+		console.log(`email sent`)
+		req.flash(`success`, `If a valid email was used, you will receive a reset link soon.`)
+		res.redirect(`/`);
+	  } catch (err){
+		console.log(`there was an error`)
+		req.flash(`success`, `If a valid email was used, you will receive a reset link soon.`)
+		res.redirect(`/`)
+	  }
+}));
+
+router.get(`/changePassword`, catchAsync( async (req, res) =>{
+		const emailToken = req.query.token;
+		const user = await User.findOne({ emailToken: emailToken});
+		if (!user){
+			req.flash(`error`, `Token is invalid. Please contact admin`);
+			return res.redirect(`/`);
+		}
+		res.render(`changePassword`, { emailToken });
+}));
+
+router.post(`/changePassword`, catchAsync(async (req, res)=>{
+	// change password logic, user.setPassword().
+	const user = await User.findOne({ emailToken: req.query.token})
+	const { newPassword, repeatPassword } = req.body; 
+	if (newPassword !== repeatPassword){
+		req.flash(`error`, `Passwords does not match.`)
+		return res.redirect(`/changePassword?token=${req.query.token}`);
+	}
+	await user.setPassword(newPassword);
+	user.emailToken = null;
+	await user.save();
+	req.flash(`success`, `Password successfully changed!`)
+	return res.redirect(`/`);
 }));
 
 router.get(`/delete`, isLoggedIn, (req, res) =>{
