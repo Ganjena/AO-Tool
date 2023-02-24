@@ -21,7 +21,8 @@ const {
 } = require(`../functions/validations.js`);
 
 const {
-	isVerified
+	isVerified,
+	isAdmin
 } = require(`../functions/user.js`);
 
 const catchAsync = require(`../utilities/catchAsync.js`);
@@ -103,6 +104,38 @@ router.post(`/register`, validateUserSchema, catchAsync( async (req, res) =>{
 				res.redirect(`/`)
 			  }
 		}));
+}));
+
+// resend verify email if didnt receive.
+router.get(`/resend-token`, catchAsync( async (req, res) =>{
+	const user = await User.findOne({username: req.query.user});
+	if (!user){
+		req.flash(`error`, `Not Valid User!`);
+		return res.redirect(`/`);
+	}
+	const msg = {
+		to: user.email,
+		from: 'marc_rothmann@hotmail.co.uk', // Use the email address or domain you verified above
+		subject: 'AO Tool - Please verify your email address.',
+		text: `
+			Please copy and paste the link below to verify your account.
+			http://${req.headers.host}/verify-email?token=${user.emailToken}
+		`,
+		html: `
+		<h1> AO Tool</h1>
+		<p>Please click the link below to verify your acccount.</p>
+		<a href="http://${req.headers.host}/verify-email?token=${user.emailToken}">Verify your account.</a>
+		`,
+	  };
+	  try {
+		await sgMail.send(msg);
+		req.flash(`success`, `Thanks for registering. Please check your email to veify your account.`)
+		res.redirect(`/`);
+	  } catch (err){
+		req.flash(`error`, `Sorry, something went wrong! Please contact admin.`)
+		res.redirect(`/`)
+	  }
+
 }));
 
 //Email verification route
@@ -433,13 +466,28 @@ router.post(`/delete`, isLoggedIn, catchAsync( async (req, res) =>{
 	  });
 }));
 
-router.get(`/logout`, catchAsync( async (req, res) =>{
+router.get(`/logout`, isLoggedIn, catchAsync( async (req, res) =>{
 	req.logout(function(err) {
 		if (err) { return next(err); }
 		req.flash('success', "You have been logged out.");
 		res.redirect('/');
 	  });
 }));
+
+router.get(`/account`, isLoggedIn, catchAsync( async (req, res) =>{
+	res.render(`account`);
+}));
+
+router.get(`/admin`, isLoggedIn, isAdmin, catchAsync( async (req, res) =>{
+	const users = await User.find({});
+	res.render(`admin`, {users});
+}));
+
+router.post(`/admin`, isLoggedIn, isAdmin, catchAsync( async (req, res) =>{
+	// add admin control logic here
+	console.log(req.body)
+	res.redirect(`/admin`);
+}))
 
 // catch all route
 router.all(`*`, (req, res, next) =>{

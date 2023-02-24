@@ -1,0 +1,30 @@
+<%- layout("layout/boilerplate") %>
+    <div class="container h-100">
+        <div class="row justify-content-around h-100">
+            <div class="col-8">
+                <h1>Admin Page</h1>
+            </div>
+            <div class="container col-6 pt-5">
+                <h3>User Count:</h3>
+                <%= users.length %>
+                    <h3>Users:</h1>
+                        <form action="/admin" method="POST">
+                            <select name="user" class="form-select" aria-label="Default select example">
+                                <option value="" selected>Select User</option>
+                                <% for (let key of Object.keys(users)){%>
+                                    <option>
+                                        <%= users[key].username %>
+                                    </option>
+                                    <% } %>
+                            </select>
+                            <button class="btn btn-warning" name="action" value="delete">Delete User</button>
+                            <button class="btn btn-warning" name="action" value="reset">Reset User</button>
+                            <button class="btn btn-warning" name="action" value="verify">Verify User</button>
+                        </form>
+            </div>
+
+
+
+
+        </div>
+    </div>

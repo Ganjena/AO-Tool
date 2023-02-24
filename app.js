@@ -71,6 +71,7 @@ async function status(req, res, next){
 	res.locals.totalNW = stats.miscStat.totalNW;
 	res.locals.land = stats.miscStat.land;
 	res.locals.power = stats.miscStat.power;
+	res.locals.isAdmin = req.user.isAdmin;
 	//add flash messages to each route
 	res.locals.success = req.flash(`success`);
 	res.locals.error = req.flash(`error`);
