@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== `production`){
 const express = require("express");
 const session = require("express-session");
 const flash = require("connect-flash");
+const helmet = require(`helmet`);
 // sanitize all query string in req.body, req.params etc to prevent sql injection
 const mongoSanitize = require('express-mongo-sanitize');
 const passport = require(`passport`);
@@ -35,11 +36,14 @@ db.once("open", () => {
 
 // add sessions to express
 const sessionConfig = {
+	name: `ao.session`,
 	secret: process.env.SESSION_SECRET,
 	resave: false,
 	saveUninitialized: true,
 	cookie: {
 		httpOnly: true,
+		// add secure at later date once deployed
+		// secure: true,
 		expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
 		maxAge: 1000 * 60 * 60 * 24 * 7,
 	},
@@ -47,6 +51,39 @@ const sessionConfig = {
 app.use(session(sessionConfig));
 app.use(flash());
 app.use(mongoSanitize());
+app.use(helmet());
+
+//helmet config
+const scriptSrcUrls = [
+	"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+];
+const styleSrcUrls = [
+	"https://cdn.jsdelivr.net"
+];
+const connectSrcUrls = [];
+const fontSrcUrls = [
+	"https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjxAwXjeu.woff2",
+	"https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXg.woff2"
+];
+app.use(
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: [],
+            connectSrc: ["'self'", ...connectSrcUrls],
+            scriptSrc: ["'unsafe-inline'", "'self'", ...scriptSrcUrls],
+            styleSrc: ["'self'", "'unsafe-inline'", ...styleSrcUrls],
+            workerSrc: ["'self'", "blob:"],
+            objectSrc: [],
+            imgSrc: [
+                "'self'",
+                "blob:",
+                "data:",
+            ],
+            fontSrc: ["'self'", ...fontSrcUrls],
+        },
+    })
+);
+
 //passport config
 app.use(passport.initialize());
 app.use(passport.session());

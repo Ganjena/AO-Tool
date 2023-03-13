@@ -184,13 +184,13 @@ router.get(`/enemy`, isLoggedIn, catchAsync( async (req, res) => {
 router.post(`/enemy`, isLoggedIn, validateEnemySchema, catchAsync( async (req, res) =>{
 	const enemyId = req.user.enemy._id;
 	// take enemy input from user and add it to the database
-	updateEnemy(enemyId, req.body);
+	await updateEnemy(enemyId, req.body);
 	// update enemy land equations and add them to database
-	calcEnemyLand(enemyId);
+	await calcEnemyLand(enemyId);
 	//update enemy power equations and add them to database
-	calcEnemyPower(enemyId);
+	await calcEnemyPower(enemyId);
 	//update enemy attack/defence equations for the attack page
-	calcEnemyDef(enemyId);
+	await calcEnemyDef(enemyId);
 	res.redirect(`/enemy`)
 })
 );

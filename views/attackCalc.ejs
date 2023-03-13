@@ -1,79 +1,120 @@
-<%- layout("layout/boilerplate") %> 
-<div class="container h-100">
-    <div class="row justify-content-around h-100">
-        <div class="col-8">
-            <h3>Enemy Defense Power</h3>
-            <h6>- If there are no figures here, update the enemy buildings page</h4>
-            <table class="table">
-                <thead>
-                    <tr>
-                    <th scope="col">Type</th>
-                    <th scope="col">Min Attack Power</th>
-                    <th scope="col">Max Attack Power</th>
-                    <th scope="col">Likley Attack Power</th>
-                    </tr>
-                </thead>
-                <tbody>                    
-                    <tr>
-                    <th scope="row">VS Sea:</th>
-                    <td colspan=""><%=attackStats.againstSea.minAmount%></td>
-                    <td colspan=""><%=attackStats.againstSea.maxAmount%></td>
-                    <td colspan=""><%=attackStats.againstSea.likleyAmount%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Air:</th>
-                    <td colspan=""><%=attackStats.againstAir.minAmount%></td>
-                    <td colspan=""><%=attackStats.againstAir.maxAmount%></td>
-                    <td colspan=""><%=attackStats.againstAir.likleyAmount%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Vehicals:</th>
-                    <td colspan=""><%=attackStats.againstVeh.minAmount%></td>
-                    <td colspan=""><%=attackStats.againstVeh.maxAmount%></td>
-                    <td colspan=""><%=attackStats.againstVeh.likleyAmount%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Infantry:</th>
-                    <td colspan=""><%=attackStats.againstInf.minAmount%></td>
-                    <td colspan=""><%=attackStats.againstInf.maxAmount%></td>
-                    <td colspan=""><%=attackStats.againstInf.likleyAmount%></td> 
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="col-8">
-            <h3>Your Attack Power</h3>
-            <table class="table">
-                <thead>
-                    <tr>
-                    <th scope="col">Type</th>
-                    <th scope="col">Attack Power</th>
-                    <th scope="col">WIN/LOSS</th>
-                    </tr>
-                </thead>
-                <tbody>                    
-                    <tr>
-                    <th scope="row">VS Sea:</th>
-                    <td colspan=""><%=build.attackStats.againstSea%></td>
-                    <td colspan=""><%=build.winLoss.againstSea%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Air:</th>
-                    <td colspan=""><%=build.attackStats.againstAir%></td>
-                    <td colspan=""><%=build.winLoss.againstAir%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Vehicals:</th>
-                    <td colspan=""><%=build.attackStats.againstVeh%></td>
-                    <td colspan=""><%=build.winLoss.againstVeh%></td>
-                    </tr>
-                    <tr>
-                    <th scope="row">VS Infantry:</th>
-                    <td colspan=""><%=build.attackStats.againstInf%></td>
-                    <td colspan=""><%=build.winLoss.againstInf%></td>
-                    </tr>
-                </tbody>
-            </table>
+<%- layout("layout/boilerplate") %>
+    <div class="container h-100">
+        <div class="row justify-content-around h-100">
+            <div class="col-8">
+                <h3>Enemy Defense Power</h3>
+                <h6>- If there are no figures here, update the enemy buildings page</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Min Attack Power</th>
+                                <th scope="col">Max Attack Power</th>
+                                <th scope="col">Likley Attack Power</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">VS Sea:</th>
+                                <td colspan="">
+                                    <%=attackStats.againstSea.minAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstSea.maxAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstSea.likleyAmount%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Air:</th>
+                                <td colspan="">
+                                    <%=attackStats.againstAir.minAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstAir.maxAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstAir.likleyAmount%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Vehicals:</th>
+                                <td colspan="">
+                                    <%=attackStats.againstVeh.minAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstVeh.maxAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstVeh.likleyAmount%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Infantry:</th>
+                                <td colspan="">
+                                    <%=attackStats.againstInf.minAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstInf.maxAmount%>
+                                </td>
+                                <td colspan="">
+                                    <%=attackStats.againstInf.likleyAmount%>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
+            <div class="col-8">
+                <h3>Your Attack Power</h3>
+                <h7><i>(Your attack power vs different unit types. AP from UBK/BK are added to all unit types)</i></h5>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Type</th>
+                                <th scope="col">Attack Power</th>
+                                <th scope="col">WIN/LOSS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">VS Sea:</th>
+                                <td colspan="">
+                                    <%=build.attackStats.againstSea%>
+                                </td>
+                                <td colspan="">
+                                    <%=build.winLoss.againstSea%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Air:</th>
+                                <td colspan="">
+                                    <%=build.attackStats.againstAir%>
+                                </td>
+                                <td colspan="">
+                                    <%=build.winLoss.againstAir%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Vehicals:</th>
+                                <td colspan="">
+                                    <%=build.attackStats.againstVeh%>
+                                </td>
+                                <td colspan="">
+                                    <%=build.winLoss.againstVeh%>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">VS Infantry:</th>
+                                <td colspan="">
+                                    <%=build.attackStats.againstInf%>
+                                </td>
+                                <td colspan="">
+                                    <%=build.winLoss.againstInf%>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+            </div>
         </div>
     </div>
-</div>
