@@ -41,3 +41,6 @@ added password reset
 v7:
 Adding styles
 
+v8:
+Merge with master branch. AOT v1.0
+
