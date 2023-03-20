@@ -1,19 +1,18 @@
 <%- layout("layout/boilerplate") %>
-    <div class="container h-100">
-        <div class="row justify-content-around h-100">
-            <div class="col-8">
-                <h1>Account Settings</h1>
+    <div class="container">
+            <div class="col-12">
+                <h1 class="text-center">Account Settings</h1>
             </div>
-            <div class="d-grid gap-2 col-6 mx-auto">
-                <a href="/reset" class="btn btn-primary" type="button">Reset Province</a>
-                <a href="/reset-password" class="btn btn-primary" type="button">Reset Password</a>
-                <a href="/delete" class="btn btn-primary" type="button">Delete Account</a>
+        <div class="row justify-content-between text-center">
+            <div class="col-12 m-3">
+                <a href="/reset" class="btn btn-warning" type="button">Reset Province</a>
+                <a href="/reset-password" class="btn btn-info" type="button">Reset Password</a>
+                <a href="/delete" class="btn btn-danger" type="button">Delete Account</a>
             </div>
             <% if(isAdmin===true){ %>
-                <div class="col-8 justify-content-around row mt-5">
+                <div class="col-12 m-3">
                     <a href="/admin" class="btn btn-primary" type="button">Admin</a>
                 </div>
                 <% } %>
-
         </div>
     </div>

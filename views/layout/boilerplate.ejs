@@ -4,18 +4,20 @@
 <head>
     <meta charset="utf-8">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous"> -->
+    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="main.css">
+
     <title>Assault.Online Tool</title>
 </head>
 
 <body>
-    <div class="container">
-        <div class="text-center">
-            <h1>Assault.Online Tool</h1>
-            <hr>
+    <div class="container border rounded-3 shadow my-5 p-0  mainBackground">
+        <div class="text-center p-3 m-0 h-50" id="banner">
+            <h1 class="h-100 w-100 m-0 pb-5 text-white">Assault.Online Tool</h1>
         </div>
-        <div class="row justify-content-around text-center">
+        <div class="row justify-content-around text-center text-white border-top-0 m-0 " id="navBar">
             <div class="col-2">
                 <% if(typeof totalNW!==`undefined`){ %>
                     Networth: $ <%=totalNW%>
@@ -35,42 +37,41 @@
                         <%}%>
             </div>
         </div>
-        <hr>
-        <div class="row mb-5">
-            <div class="col-2">
+        <div class="row m-3">
+            <div class="col-2 pt-3 px-3">
                 <div id="">
                     <h4>Calculators</h4>
                     <ul>
-                        <li><a href="/enemy">Enemy Setup</a></li>
-                        <li><a href="/attack">Attack Calculator</a></li>
-                        <li><a href="/power">Power/land Calculator</a></li>
-                        <li><a href="/stats">Stats</a></li>
+                        <li><a href="/enemy" class="link-secondary">Enemy Setup</a></li>
+                        <li><a href="/attack" class="link-secondary">Attack Calculator</a></li>
+                        <li><a href="/power" class="link-secondary">Power/land Calculator</a></li>
+                        <li><a href="/stats" class="link-secondary">Stats</a></li>
                     </ul>
                 </div>
                 <div id="">
                     <h4>Build Menu</h4>
                     <ul>
-                        <li><a href="/home">Home</a></li>
-                        <li><a href="/research">Research</a></li>
-                        <li><a href="/land">Land</a></li>
-                        <li><a href="/buildings">Buildings</a></li>
-                        <li><a href="/sea_units">Sea Units</a></li>
-                        <li><a href="/air_units">Air Units</a></li>
-                        <li><a href="/vehicle_units">Vehicle Units</a></li>
-                        <li><a href="/infantry_units">Infantry Units</a></li>
-                        <li><a href="/missiles">Missiles</a></li>
-                        <li><a href="/satellite">Satellite</a></li>
-                        <li><a href="/account">Account</a></li>
-                        <li><a href="/logout">Logout</a></li>
+                        <li><a href="/home" class="link-secondary">Home</a></li>
+                        <li><a href="/research" class="link-secondary">Research</a></li>
+                        <li><a href="/land" class="link-secondary">Land</a></li>
+                        <li><a href="/buildings" class="link-secondary">Buildings</a></li>
+                        <li><a href="/sea_units" class="link-secondary">Sea Units</a></li>
+                        <li><a href="/air_units" class="link-secondary">Air Units</a></li>
+                        <li><a href="/vehicle_units" class="link-secondary">Vehicle Units</a></li>
+                        <li><a href="/infantry_units" class="link-secondary">Infantry Units</a></li>
+                        <li><a href="/missiles" class="link-secondary">Missiles</a></li>
+                        <li><a href="/satellite" class="link-secondary">Satellite</a></li>
+                        <li><a href="/account" class="link-secondary">Account</a></li>
+                        <li><a href="/logout" class="link-secondary">Logout</a></li>
                     </ul>
                 </div>
             </div>
-            <div class="col-10 mb-5 h-100 d-inline-block">
+            <div class="col-10 my-3   h-100 d-inline-block ">
                 <%- include("./flash")%>
                     <%- body %>
             </div>
         </div>
-        <div class="fixed-bottom mt-5">
+        <div class="mt-5">
             <div class="text-center ">
                 <p><strong>Assault.Online Tool</strong> </p>
                 <p class="text-muted">Created by Ganjena</p>
@@ -78,9 +79,8 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+    <script src="bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

@@ -1,35 +1,44 @@
-<%- layout("layout/boilerplate") %> 
-<div class="container h-100">
-    <div class="row justify-content-around h-100">
-        <div class="col-8">
-            <table class="table table-hover">
-                <thead>
-                    <tr class="">
+<%- layout("layout/boilerplate") %>
+    <div class="container">
+        <div class="row justify-content-around">
+            <div class="col-10 mt-3">
+                <table class="table table-striped">
+                    <thead class="tableHead">
                         <th scope="col">Name</th>
                         <th scope="col" colspan="2">Level</th>
                         <th scope="col">Currect Effect</th>
                         <th scope="col">Select</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (let key of Object.keys(research)) {%> 
-                        <tr>
-                            <th scope="row"><%=research[key].name%></th>
-                            <td colspan="2"><%=research[key].level%>/<%=research[key].effect.length-1%></td>
-                            <td colspan=""><%=research[key].effect[research[key].level]%></td>
-                            <form action="/research" method="POST">
-                                <td><button class="<%if(research[key].level >= research[key].effect.length-1){%>d-none<%}%>">Add Research</button></td>
-                                <input type ="hidden" name ="add" value ="<%=key%>">
-                            </form>
-                            <form action="/research" method="POST">
-                                <td><button class="<%if(!research[key].level > 0 ){%>d-none<%}%>">Remove Research</button></td>
-                                <input type = "hidden" name = "remove" value = "<%=key%>">
-                            </form>
-                        </tr>
-                    
-                    <% } %> 
-                </tbody>
-              </table>
+                        <th scope="col"></th>
+                    </thead>
+                    <tbody>
+                        <% for (let key of Object.keys(research)) {%>
+                            <tr>
+                                <th scope="row">
+                                    <%=research[key].name%>
+                                </th>
+                                <td colspan="2">
+                                    <%=research[key].level%>/<%=research[key].effect.length-1%>
+                                </td>
+                                <td colspan="">
+                                    <%=research[key].effect[research[key].level]%>
+                                </td>
+                                <form action="/research" method="POST">
+                                    <td><button
+                                            class="btn btn-sm btn-secondary <%if(research[key].level >= research[key].effect.length-1){%>d-none<%}%>">Add
+                                            Research</button></td>
+                                    <input type="hidden" name="add" value="<%=key%>">
+                                </form>
+                                <form action="/research" method="POST">
+                                    <td><button
+                                            class="btn btn-sm btn-secondary <%if(!research[key].level > 0 ){%>d-none<%}%>">Remove
+                                            Research</button></td>
+                                    <input type="hidden" name="remove" value="<%=key%>">
+                                </form>
+                            </tr>
+
+                            <% } %>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>

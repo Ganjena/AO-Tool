@@ -4,10 +4,16 @@ if (process.env.NODE_ENV !== `production`){
 
 const express = require("express");
 const session = require("express-session");
+// const bootstrap = require('bootstrap')
+//use to store cookies mongo side rather then in memory
+const MongoStore = require(`connect-mongo`);
+// needed to make flash messages
 const flash = require("connect-flash");
+// SAFTEY - Stops unwanted scripts running on website
 const helmet = require(`helmet`);
 // sanitize all query string in req.body, req.params etc to prevent sql injection
 const mongoSanitize = require('express-mongo-sanitize');
+//LOGIN and authentication
 const passport = require(`passport`);
 const LocalStrategy = require(`passport-local`);
 const User = require(`./models/userSchema.js`);
@@ -18,15 +24,21 @@ const Build = require(`./models/buildSchema.js`);
 const { calcNw, calcPower} = require(`./functions/userCalcs.js`);
 const routes = require(`./routes/routes.js`);
 const app = express();
+//Development and Production address and details.
+const dbUrl = process.env.PROD_DB_ADDRESS || process.env.DEV_DB_ADDRESS 
+const port = process.env.PORT || 3000;
 
 app.engine("ejs", ejsMate);
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "scss")));
+app.use(express.static(path.join(__dirname, "node_modules/bootstrap/dist/js")));
 //body parser - ability to parse form data.
 app.use(express.urlencoded({ extended: true }));
 
 
-mongoose.connect(process.env.DB_ADDRESS);
+mongoose.connect(dbUrl);
 
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -34,36 +46,58 @@ db.once("open", () => {
 	console.log("Database connected");
 });
 
-// add sessions to express
-const sessionConfig = {
+// config connect-mongo to store sessions on database instead of memory
+app.use(session({
 	name: `ao.session`,
 	secret: process.env.SESSION_SECRET,
-	resave: false,
-	saveUninitialized: true,
+	saveUninitialized: false, // don't create session until something stored
+	resave: false, //don't save session if unmodified
+	store: MongoStore.create({
+		mongoUrl: dbUrl,
+		// touchAfter: 12 * 3600, // time period in seconds
+		autoRemove: `interval`,
+		autoRemoveInterval: 60 // In minutes
+	}),
 	cookie: {
-		httpOnly: true,
-		// add secure at later date once deployed
-		// secure: true,
-		expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-		maxAge: 1000 * 60 * 60 * 24 * 7,
-	},
-};
-app.use(session(sessionConfig));
-app.use(flash());
+		maxAge: 3600000, // 1hour
+		httpOnly: true
+	}
+	}));
+
+// // add sessions to express
+// const sessionConfig = {
+// 	name: `ao.session`,
+// 	secret: process.env.SESSION_SECRET,
+// 	resave: false,
+// 	saveUninitialized: false,
+// 	cookie: {
+// 		httpOnly: true,
+// 		// add secure at later date once deployed
+// 		// secure: true,
+// 		maxAge: 600000,
+// 	},
+// };
+// app.use(session(sessionConfig));
+app.use(flash()); 
 app.use(mongoSanitize());
 app.use(helmet());
 
+//configer bootstrap
+// app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js')); // redirect bootstrap JS
+// app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redirect JS jQuery
+// app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
+
 //helmet config
 const scriptSrcUrls = [
-	"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+	"https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js",
 ];
 const styleSrcUrls = [
-	"https://cdn.jsdelivr.net"
+	"https://cdn.jsdelivr.net",
+	"https://fonts.googleapis.com/css?family=Lato"
 ];
 const connectSrcUrls = [];
 const fontSrcUrls = [
-	"https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjxAwXjeu.woff2",
-	"https://fonts.gstatic.com/s/lato/v23/S6uyw4BMUTPHjx4wXg.woff2"
+	"https://fonts.gstatic.com"
 ];
 app.use(
     helmet.contentSecurityPolicy({
@@ -129,7 +163,14 @@ app.use((err, req, res, next) =>{
 	res.status(statusCode).render(`../utilities/error.ejs`, {err});
 });
 
-app.listen(3000, () => {
-	console.log("Listening on port 3000!");
-	console.log("Server Started.....");
+app.listen(port, () => {
+	if(port === 3000){
+		console.log(`Connected to development server...`)
+		console.log(`Port: ${port}...`);
+		console.log("Server Started.....");
+	}else {
+		console.log(`Connected to production server...`)
+		console.log(`Port: ${port}...`);
+		console.log("Server Started.....");
+	}
 });

@@ -1,45 +1,27 @@
 <%- layout("layout/boilerplate") %>
-  <div class="container h-100">
-    <div class="row justify-content-around h-100 pt-5">
-      <div class="col-9">
-        <div class="card text-center">
-          <div class="card-header">
-            <h1>Note Pad</h1>
-          </div>
-          <div class="card-body">
-            <h5 class="card-title"></h5>
-            <p class="card-text">Here you will be able to add your plans and important information</p>
-
-          </div>
-          <div class="card-footer text-muted">
-            Last updated: 2 days ago <a href="#" class="btn btn-secondary btn-sm">Edit</a>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div class="row justify-content-around h-100 pt-5">
-      <div class="col-9 ">
+  <div class="container pt-3">
+    <div class="row  justify-content-around">
+      <div class="col-5 p-0 pb-3 mainBackground">
         <h1 class="text-center">News</h1>
         <div class="accordion" id="accordionExample">
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne"
-                aria-expanded="true" aria-controls="collapseOne">
+              <button class="accordion-button  focusOne" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                 Recently Updates
               </button>
             </h2>
             <div id="collapseOne" class="accordion-collapse collapse " aria-labelledby="headingOne"
               data-bs-parent="#accordionExample">
-              <div class="accordion-body">
+              <div class="accordion-body focusOne">
                 <strong>Below will show any recent updates or changes made to the AO Tool</strong>
                 <p>- Site made and open to select few for testing</p>
-
               </div>
             </div>
           </div>
-          <div class="accordion-item">
+          <div class="accordion-item ">
             <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              <button class="accordion-button collapsed focusTwo" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                 Wish List
               </button>
@@ -55,7 +37,7 @@
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              <button class="accordion-button collapsed focusOne" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                 Known Issues
               </button>
@@ -71,21 +53,19 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="row justify-content-around h-100 pt-5">
-      <div class="col-9 ">
+      <div class="col-5 p-0 pb-3 mainBackground">
         <h1 class="text-center">Quick Tips</h1>
         <div class="accordion" id="accordionExample">
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne1"
-                aria-expanded="true" aria-controls="collapseOne">
+              <button class="accordion-button focusOne" type="button" data-bs-toggle="collapse"
+                data-bs-target="#collapseOne1" aria-expanded="true" aria-controls="collapseOne">
                 Networth Calculator
               </button>
             </h2>
             <div id="collapseOne1" class="accordion-collapse collapse " aria-labelledby="headingOne"
               data-bs-parent="#accordionExample">
-              <div class="accordion-body">
+              <div class="accordion-body focusOne">
                 <strong>This is used to calculate your networth and power stats</strong>
                 <p>Replicate your desired setup like you would normally build on AO. Entering buildings, units,
                   research and land etc and use the readouts at the top to see your NW and power stats</p>
@@ -96,7 +76,7 @@
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingTwo">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              <button class="accordion-button collapsed focusTwo" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapseTwo1" aria-expanded="false" aria-controls="collapseTwo">
                 Power Calculator
               </button>
@@ -114,14 +94,14 @@
           </div>
           <div class="accordion-item">
             <h2 class="accordion-header" id="headingThree">
-              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+              <button class="accordion-button collapsed focusOne" type="button" data-bs-toggle="collapse"
                 data-bs-target="#collapseThree1" aria-expanded="false" aria-controls="collapseThree">
                 Win/Loss Calculator
               </button>
             </h2>
             <div id="collapseThree1" class="accordion-collapse collapse" aria-labelledby="headingThree"
               data-bs-parent="#accordionExample">
-              <div class="accordion-body">
+              <div class="accordion-body ">
                 <strong>This calculator will show you if you can win vs your enemy</strong>
                 <p> Enter your units like you would normally and return to the attack calcuulator page. Then enter the
                   enemies spy reports. This will give you a <strong>ROUGH</strong> estimate of if you would win or
@@ -130,6 +110,24 @@
                 </p>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row justify-content-around ">
+      <div class="col-10 border shadow rounded p-3 my-5">
+        <div class="card text-center">
+          <div class="card-header">
+            <h1>Note Pad</h1>
+          </div>
+          <div class="card-body ">
+            <h5 class="card-title"></h5>
+            <p class="card-text ">Here you will be able to add your plans and important information</p>
+            <p class="card-text ">(P.S - Not working yet...)</p>
+
+          </div>
+          <div class="card-footer text-muted">
+            Last updated: 2 days ago <a href="#" class="btn btn-secondary btn-sm">Edit</a>
           </div>
         </div>
       </div>

@@ -5,67 +5,89 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="custom.css">
+    <link rel="stylesheet" href="main.css">
     <title>AO Tool</title>
 </head>
 
-<body>
-    <div class="container">
-        <div class="text-center">
-            <h1>Assault.Online Tool</h1>
-            <hr>
+<body class="background">
+    <div class="container border rounded-3 shadow mt-5 p-0  mainBackground">
+        <div class="text-center p-3 m-0 h-50" id="banner">
+            <h1 class="h-100 w-100 m-0 pb-5 text-white">Assault.Online Tool</h1>
         </div>
-        <div class="row justify-content-center">
+        <div class="row justify-content-around mt-4 mx-5 ">
             <%- include("./layout/flash")%>
-                <div class="col-3">
-                    <h3>AO Tool Login</h3>
-                    <form action="/login" method="POST">
-                        <div class="form-group">
-                            <label for="username"> Username:</label><br>
-                            <input type="username" id="username" name="username" placeholder="Username">
-                        </div>
-                        <div class="form-group">
-                            <label for="password"> Password:</label><br>
-                            <input type="password" id="password" name="password" placeholder="Password">
-                        </div>
-                        <button type="submit">Login</button>
-                    </form>
-                    <a href="/lost-password">Forgot Password?</a>
+                <div class="col-3 my-3">
+                    <h5>Welcome to AO Tool</h5>
+                    <p><strong>Assault.Online Tools</strong> is a free project open to whome ever would like to use it.
+                        It was
+                        born out of the need for a web development project. <strong>Assault.Online</strong> is the
+                        unofficial
+                        successor to Nukezone.nu. Assault.Online is a strategic text based browser game and can be found
+                        <a href="http://assault.online/">here</a>.
+                    </p>
+
                 </div>
-                <div class="col-3">
-                    <h3>AO Tool Register</h3>
-                    <form action="/register" method="POST">
-                        <div class="form-group">
-                            <label for="email"> Email:</label><br>
-                            <input type="email" id="email" name="email" placeholder="Email">
-                        </div>
-                        <div class="form-group">
+                <div class="col-3 border rounded-3 pt-2">
+                    <span class="text-center">
+                        <h3>Login</h3>
+                    </span>
+                    <form action="/login" method="POST">
+                        <div class="form-group pt-2">
                             <label for="username"> Username:</label><br>
-                            <input type="username" id="username" name="username" placeholder="Username">
+                            <input class="form-control form-control-sm" type="username" id="username" name="username"
+                                placeholder="Username">
                         </div>
-                        <div class="form-group">
+
+                        <div class="form-group pt-2">
                             <label for="password"> Password:</label><br>
-                            <input type="password" id="password" name="password" placeholder="Password">
+                            <input class="form-control form-control-sm" type="password" id="password" name="password"
+                                placeholder="Password">
                         </div>
-                        <button type="submit">Register</button>
+                        <div class="d-grid">
+                            <button class="btn btn-sm btn-secondary  mt-3 mx-5" type="submit">Login</button>
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="/lost-password">Forgot Password?</a>
+                    </div>
+
+                </div>
+                <div class="col-3 border rounded-3 pt-2">
+                    <span class="text-center">
+                        <h3>Register</h3>
+                    </span>
+                    <form action="/register" method="POST">
+                        <div class="form-group pt-2">
+                            <label for="email"> Email:</label><br>
+                            <input type="email" class="form-control form-control-sm" id="email" name="email"
+                                placeholder="Email">
+                        </div>
+                        <div class="form-group pt-2">
+                            <label for="username"> Username:</label><br>
+                            <input type="username" class="form-control form-control-sm" id="username" name="username"
+                                placeholder="Username">
+                        </div>
+                        <div class="form-group pt-2">
+                            <label for="password"> Password:</label><br>
+                            <input type="password" class="form-control form-control-sm" id="password" name="password"
+                                placeholder="Password">
+                        </div>
+                        <div class="d-grid">
+                            <button class="btn btn-sm btn-secondary  my-3 mx-5" type="submit">Register</button>
+                        </div>
                     </form>
                 </div>
         </div>
-        <div id="footer">
-            <p><strong>Assault.Online Tools</strong> is a free project open to whome ever would like to use it. It was
-                born out of the need for a web development project. <strong>Assault.Online</strong> is the unofficial
-                successor to Nukezone.nu. Assault.Online is a strategic text based browser game and can be found <a
-                    href="http://assult.online/">Here</a>. </p>
+        <div id="footer" class="text-center mt-5">
             <p>This site is still very much under construction so if you do spot any bugs or have ideas for improvements
-                you can contact me <a href="">Here.</a> All the tools avalible on this site are compliant with AO rules.
+                you can contact me <a href="https://discord.com/invite/BNF8trF">here.</a>
             </p>
+            <p> All the tools avalible on this site are compliant with AO rules.</p>
         </div>
     </div>
+    <script src="bootstrap.bundle.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>

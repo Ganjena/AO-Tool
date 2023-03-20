@@ -38,3 +38,6 @@ added email verification
 added password change
 added password reset
 
+v7:
+Adding styles
+
