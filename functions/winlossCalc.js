@@ -113,7 +113,7 @@ function between(apNeeded, ap){
     }
     let plus20 = apNeeded*1.2
     let minus20 = apNeeded-(apNeeded*0.2);
-    if (apNeeded = 0){
+    if (apNeeded > 0){
         if  (ap >= apNeeded && ap <= plus20){
             result.condition = "Close Victory";
             result.info = "You win but its within 20% of the defenders AP."

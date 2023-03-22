@@ -1,5 +1,17 @@
 <%- layout("layout/boilerplate") %>
     <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-8 my-3 text-center">
+                <h3 class="text-center">Win/Loss</h3>
+                <h7 class=""><i>(Win/Loss is based on enemies likley AP+10% vs your AP)</i></h7>
+                <div class="card mx-auto mt-2" style="width: 30rem;">
+                    <div class="card-body my-3">
+                        <h5 class="card-title"><%= winLoss.condition %></h5>
+                        <p class="card-text"><%= winLoss.info%></p>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row justify-content-around">
             <div class="col-8 my-3">
                 <h3>Enemy Defense Power</h3>
@@ -102,18 +114,6 @@
                             </tr>
                         </tbody>
                     </table>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-8 my-3 text-center">
-                <h3 class="text-center">Win/Loss</h3>
-                <h7 class=""><i>(Win/Loss is based on enemies likley AP+10% vs your AP)</i></h7>
-                <div class="card mx-auto" style="width: 18rem;">
-                    <div class="card-body">
-                        <h5 class="card-title"><%= winLoss.condition %></h5>
-                        <p class="card-text"><%= winLoss.info%></p>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
