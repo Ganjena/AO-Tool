@@ -25,6 +25,15 @@ const {
 	isAdmin
 } = require(`../functions/user.js`);
 
+// testing new winloss calc
+const {
+    defenderUnitTypes,
+    attackerUnitTypes,
+    defenderUnitTargets,
+    attackerUnitTargets,
+	attackerAP
+} = require(`../functions/winlossCalc.js`);
+
 const catchAsync = require(`../utilities/catchAsync.js`);
 const ExpressError = require(`../utilities/ExpressError.js`);
 // SEND GRID email setup to verify users email address.
@@ -196,10 +205,13 @@ router.post(`/enemy`, isLoggedIn, validateEnemySchema, catchAsync( async (req, r
 );
 
 router.get("/attack", isLoggedIn, catchAsync( async(req, res) => {
-	const {attackStats} = await Enemy.findById(req.user.enemy._id);
-	const build = await Build.findById(req.user.build._id);
-	//update and check all attack powers
-	res.render("attackCalc", {attackStats, build});
+	const attacker = req.user.build._id;
+	const defender = req.user.enemy._id;
+	const {attackStats} = await Enemy.findById(defender);
+	const build = await Build.findById(attacker);
+	const winLoss = await attackerAP(attacker, defender);
+	// console.log(winLoss)
+	res.render("attackCalc", {attackStats, build, winLoss});
 })
 );
 

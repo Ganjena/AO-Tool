@@ -73,7 +73,6 @@
                             <tr>
                                 <th scope="col">Type</th>
                                 <th scope="col">Attack Power</th>
-                                <th scope="col">WIN/LOSS</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -81,40 +80,40 @@
                                 <th scope="row">VS Sea:</th>
                                 <td colspan="">
                                     <%=build.attackStats.againstSea%>
-                                </td>
-                                <td colspan="">
-                                    <%=build.winLoss.againstSea%>
-                                </td>
+                                </td>                              
                             </tr>
                             <tr>
                                 <th scope="row">VS Air:</th>
                                 <td colspan="">
                                     <%=build.attackStats.againstAir%>
-                                </td>
-                                <td colspan="">
-                                    <%=build.winLoss.againstAir%>
-                                </td>
+                                </td>                              
                             </tr>
                             <tr>
                                 <th scope="row">VS Vehicals:</th>
                                 <td colspan="">
                                     <%=build.attackStats.againstVeh%>
-                                </td>
-                                <td colspan="">
-                                    <%=build.winLoss.againstVeh%>
-                                </td>
+                                </td>                              
                             </tr>
                             <tr>
                                 <th scope="row">VS Infantry:</th>
                                 <td colspan="">
                                     <%=build.attackStats.againstInf%>
-                                </td>
-                                <td colspan="">
-                                    <%=build.winLoss.againstInf%>
-                                </td>
+                                </td>                               
                             </tr>
                         </tbody>
                     </table>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-8 my-3 text-center">
+                <h3 class="text-center">Win/Loss</h3>
+                <h7 class=""><i>(Win/Loss is based on enemies likley AP+10% vs your AP)</i></h7>
+                <div class="card mx-auto" style="width: 18rem;">
+                    <div class="card-body">
+                        <h5 class="card-title"><%= winLoss.condition %></h5>
+                        <p class="card-text"><%= winLoss.info%></p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
