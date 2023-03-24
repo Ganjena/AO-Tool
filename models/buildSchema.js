@@ -169,7 +169,7 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 155
+                    default: 195
                 },
                 defense: {
                     type: Number,
@@ -471,11 +471,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 135
+                    default: 155
                 },
                 defense: {
                     type: Number,
-                    default: 90
+                    default: 100
                 },
                 targets:{
                     type: Array,
@@ -714,11 +714,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 115
+                    default: 135
                 },
                 defense: {
                     type: Number,
-                    default: 85
+                    default: 90
                 },
                 targets:{
                     type: Array,
@@ -744,11 +744,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 44
+                    default: 43
                 },
                 defense: {
                     type: Number,
-                    default: 36
+                    default: 35
                 },
                 targets:{
                     type: Array,
@@ -926,11 +926,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 35
+                    default: 38
                 },
                 defense: {
                     type: Number,
-                    default: 19
+                    default: 25
                 },
                 targets:{
                     type: Array,
@@ -1046,11 +1046,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 70
+                    default: 76
                 },
                 defense: {
                     type: Number,
-                    default: 35
+                    default: 50
                 },
                 targets:{
                     type: Array,

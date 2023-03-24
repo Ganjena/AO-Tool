@@ -4,7 +4,6 @@ if (process.env.NODE_ENV !== `production`){
 
 const express = require("express");
 const session = require("express-session");
-// const bootstrap = require('bootstrap')
 //use to store cookies mongo side rather then in memory
 const MongoStore = require(`connect-mongo`);
 // needed to make flash messages

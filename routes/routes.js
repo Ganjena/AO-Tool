@@ -498,6 +498,19 @@ router.get(`/admin`, isLoggedIn, isAdmin, catchAsync( async (req, res) =>{
 router.post(`/admin`, isLoggedIn, isAdmin, catchAsync( async (req, res) =>{
 	// add admin control logic here
 	console.log(req.body)
+	if (req.body.action === "updateDB"){
+		const allUsers = await User.find({});
+		for (let i = 0; i < allUsers.length; i++ ){
+			const user = allUsers[i];
+			const build = new Build();
+			const enemy = new Enemy();
+			user.build = build;
+			user.enemy = enemy;
+			await build.save();
+			await enemy.save();
+			await user.save();
+		}
+	}
 	res.redirect(`/admin`);
 }))
 
