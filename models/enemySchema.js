@@ -18,11 +18,11 @@ const enemySchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 115
+                    default: 138
                 },
                 defense: {
                     type: Number,
-                    default: 70
+                    default: 82
                 },
                 targets:{
                     type: Array,
