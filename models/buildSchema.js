@@ -11,7 +11,7 @@ const buildSchema = new mongoose.Schema({
                 },
                 price: {
                     type: Number,
-                    default: 22000
+                    default: 1530
                 },
                 amount: {
                     type: Number,
@@ -19,11 +19,11 @@ const buildSchema = new mongoose.Schema({
                 },
                 attack:{
                     type: Number,
-                    default: 115
+                    default: 138
                 },
                 defense: {
                     type: Number,
-                    default: 70
+                    default: 82
                 },
                 targets:{
                     type: Array,
