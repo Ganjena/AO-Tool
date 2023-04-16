@@ -82,10 +82,11 @@ async function attackerUnitTargets(attackerId){
     return attackerUnitTargets;
 }
 
+//needs to check buildings also
 async function defenderUnitTargets(defenderId){
     const defender = await Enemy.findById(defenderId);
     let defenderUnitTargets = [];
-    // work out what units types the defender has
+    // work out what units types the defender attacks
     for (let group of Object.keys(defender.units)){
         for (let units of Object.keys(defender.units[group])){
             if (defender.units[group][units].minAmount > 0){
@@ -95,6 +96,16 @@ async function defenderUnitTargets(defenderId){
                     }
                 })
             }
+        }
+    }
+    // works out what buildings the defender attacks
+    for (let group of Object.keys(defender.buildings)){
+        if (defender.buildings[group].minAmount > 0){
+            defender.buildings[group].targets.forEach(type =>{
+                if (defenderUnitTargets.indexOf(type) === -1){
+                    defenderUnitTargets.push(type);
+                }
+            })
         }
     }
     //remove Bld target from defender as not needed.
@@ -143,14 +154,15 @@ async function attackerAP (user, defender){
 	const attackerUnits = await attackerUnitTypes(user);
 	const attackerTargets = await attackerUnitTargets(user);
 	const defenderTargets = await defenderUnitTargets(defender);
+    // console.log(defenderSetup);
     // console.log(defenderUnits);
-    console.log(attackerUnits);
+    // console.log(attackerUnits);
     // console.log(attackerTargets);
-    console.log(defenderTargets);
+    // console.log(defenderTargets);
 
     let activeAP = 0;
     let usedUnits = [];
-
+    
     defenderUnits.forEach(type => {
         if (attackerTargets.includes(type)){
             for (let group of Object.keys(attacker.units)){
@@ -158,6 +170,7 @@ async function attackerAP (user, defender){
                     if(attacker.units[group][units].targets.includes(type)){
                         if (attacker.units[group][units].amount > 0 && !usedUnits.some(e => e === attacker.units[group][units].name)){
                             usedUnits.push(attacker.units[group][units].name)
+                            // console.log(attacker.units[group][units].amount * attacker.units[group][units].attack)
                             activeAP += attacker.units[group][units].amount * attacker.units[group][units].attack;
                         }
                     }
@@ -165,10 +178,12 @@ async function attackerAP (user, defender){
             }
         }
     })
-
+    // console.log(activeAP)
     let likleyAmount = 0;
     let activeDP = 0;
     let usedDefUnits =[];
+
+    // works out activeDP from units
     attackerUnits.forEach(type => {
         if (defenderTargets.includes(type) && !defenderTargets.includes("Bld")){
             for (let group of Object.keys(defenderSetup.units)){
@@ -178,18 +193,33 @@ async function attackerAP (user, defender){
                             usedDefUnits.push(defenderSetup.units[group][units].name);
                             likleyAmount = defenderSetup.units[group][units].minAmount*1.17;
                             activeDP += likleyAmount * defenderSetup.units[group][units].attack;
-                            console.log(usedDefUnits);
                         }
                     }
                 }
             }
         }
     })
+
+    // works out activeDP from buildings
+    attackerUnits.forEach(type => {
+        if (defenderTargets.includes(type) && !defenderTargets.includes("Bld")){
+            for (let group of Object.keys(defenderSetup.buildings)){
+                if (defenderSetup.buildings[group].targets.includes(type)){
+                    if (defenderSetup.buildings[group].minAmount > 0 &&  !usedDefUnits.some(e => e === defenderSetup.buildings[group].name)){
+                        likleyAmount = defenderSetup.buildings[group].minAmount*1.17;
+                        activeDP += likleyAmount * defenderSetup.buildings[group].attack;
+                    }
+                }
+            }
+        }
+    })
+
     let apNeeded = Math.ceil(activeDP*1.1);
 
-    console.log(activeAP);
-    console.log(activeDP)
-    console.log(apNeeded);
+    // console.log(usedDefUnits)
+    // console.log(activeAP);
+    // console.log(activeDP)
+    // console.log(apNeeded);
 
     //work out function to check who wins
     return between(apNeeded, activeAP);
