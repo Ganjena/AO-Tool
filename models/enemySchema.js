@@ -1269,6 +1269,14 @@ const enemySchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    name: {
+        type: String,
+        default: "N/A"
+    },
+    networth: {
+        type: Number,
+        default: 0
+    },
     stats: {
         maxBuildings: {
             type: Number,

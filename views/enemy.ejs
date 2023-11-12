@@ -13,26 +13,28 @@
             <ul>
                 <li>Name:</li>
                 <li>Current Networth:</li>
-                <li>Reported Networth:</li>
-                <li>Current Land:</li>
-                <li>Reported Land:</li>
+                <li>Current Land: <%= enemyLand %> m3</li>
             </ul>
             <ul>
                 <li>Units:</li>
                 <ul>
-                    <li>units name - amount</li>
-                    <li>units name - amount</li>
-                    <li>units name - amount</li>
-                    <li>units name - amount</li>
+                <%    for (let unitType of Object.keys(units)){ %>
+                <%        for (let unit of Object.keys(units[unitType])){ %>
+                <%            if (units[unitType][unit].minAmount > 0){ %>
+                               <li> <%=`${units[unitType][unit].name} ${units[unitType][unit].minAmount} - ${units[unitType][unit].maxAmount}`%></li>
+                <%            }	%>
+                <%        } %>
+                <%    } %>
                 </ul>
             </ul>
             <ul>
                 <li>Buildings:</li>
                 <ul>
-                    <li>Building name - amount</li>
-                    <li>Building name - amount</li>
-                    <li>Building name - amount</li>
-                    <li>Building name - amount</li>
+                <% 	for (let key of Object.keys(buildings)){ %>
+                    <% if (buildings[key].minAmount > 0){ %>
+                        <li><%=`${buildings[key].name} ${buildings[key].minAmount} - ${buildings[key].maxAmount}` %></li>
+                   <% }%>
+                <%  } %>
                 </ul>
             </ul>
         </div>
