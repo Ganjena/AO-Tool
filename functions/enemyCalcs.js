@@ -53,58 +53,153 @@ async function calcEnemyPower(id){
 }
 
 	// take enemy input from user and add it to the database
-    async function updateEnemy(id, enemySetup){
-        const enemy = await Enemy.findById(id);
-        for (let group of Object.keys(enemySetup)){
-            if(group === `seaUnits`){
-                for (unit of Object.keys(enemySetup[group])){
-                    if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
-                        enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
-                        enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
-                    }
-                }
-            }else if (group === `airUnits`){
-                for (unit of Object.keys(enemySetup[group])){
-                    if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
-                        enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
-                        enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
-                    }
-                }
-            }else if (group === `vehUnits`){
-                for (unit of Object.keys(enemySetup[group])){
-                    if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
-                        enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
-                        enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
-                    }
-                }
-            }else if (group === `infUnits`){
-                for (unit of Object.keys(enemySetup[group])){
-                    if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
-                        enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
-                        enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
-                    }
-                }
-            }else if (group === `buildings`){
-                    for (unit of Object.keys(enemySetup[group])){
-                        if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
-                            enemy[group][unit].minAmount = enemySetup[group][unit].minAmount;
-                            enemy[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
-                        }
-                    }
-            }else if (group === `land`){
-                    if (enemySetup.land.amount){
-                        enemy.land = enemySetup.land.amount;
-                    }
-            }else {
-                if (group === `ppeActive`){
-                    if (enemySetup.ppeActive){
-                        enemy.ppeActive = enemySetup.ppeActive;
-                    }
-                }
-            }
-        }
-        await enemy.save();
-    };
+    // async function updateEnemy(id, enemySetup){
+    //     const enemy = await Enemy.findById(id);
+    //     for (let group of Object.keys(enemySetup)){
+    //         if(group === `seaUnits`){
+    //             for (unit of Object.keys(enemySetup[group])){
+    //                 if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
+    //                     enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
+    //                     enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
+    //                 }
+    //             }
+    //         }else if (group === `airUnits`){
+    //             for (unit of Object.keys(enemySetup[group])){
+    //                 if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
+    //                     enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
+    //                     enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
+    //                 }
+    //             }
+    //         }else if (group === `vehUnits`){
+    //             for (unit of Object.keys(enemySetup[group])){
+    //                 if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
+    //                     enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
+    //                     enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
+    //                 }
+    //             }
+    //         }else if (group === `infUnits`){
+    //             for (unit of Object.keys(enemySetup[group])){
+    //                 if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
+    //                     enemy.units[group][unit].minAmount = enemySetup[group][unit].minAmount;
+    //                     enemy.units[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
+    //                 }
+    //             }
+    //         }else if (group === `buildings`){
+    //                 for (unit of Object.keys(enemySetup[group])){
+    //                     if (enemySetup[group][unit].minAmount && enemySetup[group][unit].maxAmount){
+    //                         enemy[group][unit].minAmount = enemySetup[group][unit].minAmount;
+    //                         enemy[group][unit].maxAmount = enemySetup[group][unit].maxAmount;
+    //                     }
+    //                 }
+    //         }else if (group === `land`){
+    //                 if (enemySetup.land.amount){
+    //                     enemy.land = enemySetup.land.amount;
+    //                 }
+    //         }else {
+    //             if (group === `ppeActive`){
+    //                 if (enemySetup.ppeActive){
+    //                     enemy.ppeActive = enemySetup.ppeActive;
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     await enemy.save();
+    // };
+
+	async function updateEnemy(id, userInput){
+		const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
+		let currentNetworth = 0;
+		let currentLand = 0;
+		let playerName = "";
+		let playerId = "";
+		let reportedUnits = {};
+		let match;
+		while ((match = regex.exec(userInput)) !== null) {
+		playerName = playerName || match.groups.name?.trim();
+		playerId = playerId || match.groups.id?.trim();
+		currentNetworth = currentNetworth || (match.groups.networth ? parseInt(match.groups.networth.replace(/\s/g, ''), 10) : 0);
+		currentLand = currentLand || (match.groups.land ? parseInt(match.groups.land.replace(/\s/g, ''), 10) : 0);
+	
+		if (match.groups.unitName !== undefined) {
+			const unitName = match.groups.unitName.trim();
+			const unitValue1 = parseInt(match.groups.unitValue1, 10);
+			const unitValue2 = parseInt(match.groups.unitValue2, 10);
+			if (unitName !== "") {
+				reportedUnits[unitName] = { value1: unitValue1, value2: unitValue2 };
+			}
+		}
+		}
+		const enemy = await Enemy.findById(id);
+		enemy.name = `${playerName} (#${playerId})`;
+		enemy.networth = currentNetworth;
+		enemy.land = currentLand;
+
+		let reported = []
+		for (let reportedType of Object.keys(reportedUnits)){
+			for (let unitType of Object.keys(enemy.units)){
+				for (let unitName of Object.keys(enemy.units[unitType])){
+					if (enemy.units[unitType][unitName].name === reportedType){
+						reported.push(reportedType);
+						enemy.units[unitType][unitName].minAmount = reportedUnits[reportedType].value1;
+						enemy.units[unitType][unitName].maxAmount = reportedUnits[reportedType].value2;
+					} 
+				}
+			}
+		}
+
+		for (let reportedType of Object.keys(reportedUnits)){
+			for (let buildingType of Object.keys(enemy.buildings)){
+				if (enemy.buildings[buildingType].name === reportedType){
+					reported.push(reportedType);
+					enemy.buildings[buildingType].minAmount = reportedUnits[reportedType].value1;
+					enemy.buildings[buildingType].maxAmount = reportedUnits[reportedType].value2;
+				} 
+			}
+		}
+
+		console.log(reported)
+		// once spy report is updated. This sets everything else to default value.
+		for (let i = 0; i < reported.length; i++){
+			for (let unitType of Object.keys(enemy.units)){	
+				for (let unitName of Object.keys(enemy.units[unitType])){
+					if (!reported.includes(enemy.units[unitType][unitName].name)){
+						enemy.units[unitType][unitName].minAmount = 0;
+						enemy.units[unitType][unitName].maxAmount = 0;
+					} 
+				}
+			}
+			for (let buildingType of Object.keys(enemy.buildings)){
+				if (!reported.includes(enemy.buildings[buildingType].name)){
+					enemy.buildings[buildingType].minAmount = 0;
+					enemy.buildings[buildingType].maxAmount = 0;
+				}
+			}
+		}
+
+
+
+
+		// for (let key of Object.keys(enemy.units)){	
+		// 	for (let units of Object.keys(enemy.units[key])){
+		// 		if (enemy.units[key][units].name === reportedUnits[enemy.units[key][units].name]){
+		// 			console.log("True!")
+		// 			// enemy.units[key][units].minAmount = reportedUnits[enemy.units[key][units].name].value1;
+		// 			// enemy.units[key][units].maxAmount = reportedUnits[enemy.units[key][units].name].value2;
+		// 		} 
+		// 	}
+		// }
+		// for (let buildings of Object.keys(enemy.buildings)){
+		// 	if (enemy.buildings[buildings].name === reportedUnits.name){
+		// 		enemy.buildings[buildings].minAmount = reportedUnits.value1;
+		// 		enemy.buildings[buildings].maxAmount = reportedUnits.value2;
+		// 	} else {
+		// 		enemy.buildings[buildings].minAmount = 0;
+		// 		enemy.buildings[buildings].maxAmount = 0;
+		// 	}
+		// }
+		await enemy.save();
+	}
+
 
     //calculate enemy land
 async function calcEnemyLand(id){

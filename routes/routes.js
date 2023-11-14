@@ -185,37 +185,19 @@ router.get(`/enemy`, isLoggedIn, catchAsync( async (req, res) => {
 	const enemyId = req.user.enemy._id;
 	calcEnemyLand(enemyId);
 	calcEnemyPower(enemyId);
-	const {units, buildings, land, ppeActive} = await Enemy.findById(enemyId);
+	const {units, buildings, land, ppeActive, name, networth}  = await Enemy.findById(enemyId);
 	//toLocalString() formats the number with comma's.
 	enemyLand = land.toLocaleString();
-	res.render(`enemy`, {units, buildings, ppeActive, enemyLand});
+	enemyNetworth = networth.toLocaleString();
+	res.render(`enemy`, {units, buildings, ppeActive, enemyLand, name, enemyNetworth});
 })
 );
 
 router.post(`/enemy`, isLoggedIn, catchAsync( async (req, res) =>{
 	const enemyId = req.user.enemy._id;
 	const userInput = req.body.report;
-	// Regular expression to match building types and numbers
-const regex = /([a-zA-Z\s]+)(\d+)\s*-\s*(\d+)/g;
-
-let total = 0;
-
-// Executing the regular expression on the input
-let match;
-while ((match = regex.exec(userInput)) !== null) {
-  const buildingType = match[1].trim(); // Trim to remove leading/trailing spaces
-  const firstNumber = parseInt(match[2], 10);
-  const secondNumber = parseInt(match[3], 10);
-
-  const sum = firstNumber + secondNumber;
-  total += sum;
-
-  console.log(`${buildingType}: ${sum}`);
-}
-
-console.log(`Total: ${total}`);
-	// // take enemy input from user and add it to the database
-	// await updateEnemy(enemyId, req.body);
+	// take enemy input from user and add it to the database
+	await updateEnemy(enemyId, userInput);
 	// // update enemy land equations and add them to database
 	// await calcEnemyLand(enemyId);
 	// //update enemy power equations and add them to database
