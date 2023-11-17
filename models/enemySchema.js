@@ -903,7 +903,7 @@ const enemySchema = new mongoose.Schema({
         commandCenter: {
             name: {
                 type: String,
-                default: `Command Center`
+                default: `Command Centre`
             },
             minAmount: {
                 type: Number,

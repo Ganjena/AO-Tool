@@ -108,6 +108,7 @@ async function calcEnemyPower(id){
     // };
 
 	async function updateEnemy(userDoc, userInput){
+		//const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
 		const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
 		let currentNetworth = 0;
 		let currentLand = 0;
@@ -115,60 +116,85 @@ async function calcEnemyPower(id){
 		let playerId = "";
 		let reportedUnits = {};
 		let match;
+		
 		while ((match = regex.exec(userInput)) !== null) {
-		playerName = playerName || match.groups.name?.trim();
-		playerId = playerId || match.groups.id?.trim();
-		currentNetworth = currentNetworth || (match.groups.networth ? parseInt(match.groups.networth.replace(/\s/g, ''), 10) : 0);
-		currentLand = currentLand || (match.groups.land ? parseInt(match.groups.land.replace(/\s/g, ''), 10) : 0);
-	
-		if (match.groups.unitName !== undefined) {
-			const unitName = match.groups.unitName.trim();
-			const unitValue1 = parseInt(match.groups.unitValue1, 10);
-			const unitValue2 = parseInt(match.groups.unitValue2, 10);
-			if (unitName !== "") {
+		  
+			playerName = playerName || match.groups.name?.trim();
+			playerId = playerId || match.groups.id?.trim();
+			currentNetworth = currentNetworth || (match.groups.networth ? parseInt(match.groups.networth.replace(/\s/g, ''), 10) : 0);
+			currentLand = currentLand || (match.groups.land ? parseInt(match.groups.land.replace(/\s/g, ''), 10) : 0);
+		  
+			if (match.groups.unitName !== undefined) {
+			  let unitName = match.groups.unitName.trim();
+		  
+			  // Skip lines where unitName is empty
+			  if (unitName === "") {
+				continue;
+			  }
+		  
+			  // Remove "UNITS" or "BUILDINGS" prefix
+			  const isUnit = unitName.startsWith("UNITS");
+			  const isBuilding = unitName.startsWith("BUILDINGS");
+			  if (isUnit || isBuilding) {
+				unitName = unitName.substring(isUnit ? 5 : 9);
+			  }
+		  
+			  // Remove '\r\n'
+			  unitName = unitName.replace(/\r\n/g, '');
+		  
+			  const unitValue1 = parseInt(match.groups.unitValue1, 10);
+			  const unitValue2 = parseInt(match.groups.unitValue2, 10);
+			  if (unitName !== "") {
 				reportedUnits[unitName] = { value1: unitValue1, value2: unitValue2 };
+			  }
+			}
+		  }
+		  
+		
+		
+		const filter = userDoc.enemy;
+		await Enemy.deleteOne(filter);
+		const user = await User.findById(userDoc);
+		const replacement = new Enemy();
+		user.enemy = replacement;
+		const enemy = user.enemy;
+		enemy.networth = currentNetworth;
+		enemy.name = `${playerName} (#${playerId})`;
+		enemy.land = currentLand;
+		let reported = []
+		console.log(`=====units picked from input========`)
+		console.log(reportedUnits)
+		console.log(`=====units picked from input========`)
+		// console.log(`=====sorted units========`)
+		for (let reportedType of Object.keys(reportedUnits)){
+			console.log(`reported unit: ${reportedType}`)
+			for (let unitType of Object.keys(enemy.units)){
+				for (let unitName of Object.keys(enemy.units[unitType])){
+					// if (enemy.units[unitType][unitName].name == `Rifle infantry`){
+					// 	console.log(`HIT!!!!`)
+					// }
+					if (enemy.units[unitType][unitName].name === reportedType){
+						// console.log(enemy.units[unitType][unitName].name)
+						// console.log(reportedType)
+						reported.push(reportedType);
+						enemy.units[unitType][unitName].minAmount = reportedUnits[reportedType].value1;
+						enemy.units[unitType][unitName].maxAmount = reportedUnits[reportedType].value2;
+					} 
+				}
 			}
 		}
-		}
-		console.log(userDoc);
-		const filter = userDoc.enemy;
-		const replacement = new Enemy();
-		const options = {returnDocument: `after`};
-		const enemy = await Enemy.deleteOne(filter);
-		const user = await User.findById(userDoc);
-		user.enemy = replacement;
-		// //const enemy = await Enemy.findById(userDoc.enemy._id);
-		// console.log(user)
-		// user.enemy.remove();
-		// user.enemy = new Enemy();
-		// const enemy = user.enemy;
-		// enemy.networth = currentNetworth;
-		// enemy.name = `${playerName} (#${playerId})`;
-		// enemy.land = currentLand;
-		// let reported = []
-		// for (let reportedType of Object.keys(reportedUnits)){
-		// 	for (let unitType of Object.keys(enemy.units)){
-		// 		for (let unitName of Object.keys(enemy.units[unitType])){
-		// 			if (enemy.units[unitType][unitName].name === reportedType){
-		// 				reported.push(reportedType);
-		// 				enemy.units[unitType][unitName].minAmount = reportedUnits[reportedType].value1;
-		// 				enemy.units[unitType][unitName].maxAmount = reportedUnits[reportedType].value2;
-		// 			} 
-		// 		}
-		// 	}
-		// }
-		// //console.log(reported)
-		// for (let reportedType of Object.keys(reportedUnits)){
-		// 	for (let buildingType of Object.keys(enemy.buildings)){
-		// 		if (enemy.buildings[buildingType].name === reportedType){
-		// 			reported.push(reportedType);
-		// 			enemy.buildings[buildingType].minAmount = reportedUnits[reportedType].value1;
-		// 			enemy.buildings[buildingType].maxAmount = reportedUnits[reportedType].value2;
-		// 		} 
-		// 	}
-		// }
+		// console.log(`=====sorted units========`)
 		// console.log(reported)
-		// // once spy report is updated. This sets everything else to default value.
+		for (let reportedType of Object.keys(reportedUnits)){
+			for (let buildingType of Object.keys(enemy.buildings)){
+				if (enemy.buildings[buildingType].name === reportedType){
+					reported.push(reportedType);
+					enemy.buildings[buildingType].minAmount = reportedUnits[reportedType].value1;
+					enemy.buildings[buildingType].maxAmount = reportedUnits[reportedType].value2;
+				} 
+			}
+		}
+		// once spy report is updated. This sets everything else to default value.
 		// for (let i = 0; i < reported.length; i++){
 		// 	for (let unitType of Object.keys(enemy.units)){	
 		// 		for (let unitName of Object.keys(enemy.units[unitType])){
