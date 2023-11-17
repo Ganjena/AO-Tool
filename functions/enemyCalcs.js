@@ -130,7 +130,13 @@ async function calcEnemyPower(id){
 			}
 		}
 		}
-		
+		console.log(userDoc);
+		const filter = userDoc.enemy;
+		const replacement = new Enemy();
+		const options = {returnDocument: `after`};
+		const enemy = await Enemy.deleteOne(filter);
+		const user = await User.findById(userDoc);
+		user.enemy = replacement;
 		// //const enemy = await Enemy.findById(userDoc.enemy._id);
 		// console.log(user)
 		// user.enemy.remove();
@@ -201,7 +207,8 @@ async function calcEnemyPower(id){
 		// 		enemy.buildings[buildings].maxAmount = 0;
 		// 	}
 		// }
-		// await user.save();
+		await replacement.save()
+		await user.save();
 	}
 
 
