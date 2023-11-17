@@ -1,5 +1,6 @@
 const Build = require(`../models/buildSchema.js`);
-const Enemy = require(`../models/enemySchema.js`)
+const Enemy = require(`../models/enemySchema.js`);
+const User = require(`../models/userSchema.js`);
 
 
 // calculate the enemies power
@@ -106,7 +107,7 @@ async function calcEnemyPower(id){
     //     await enemy.save();
     // };
 
-	async function updateEnemy(id, userInput){
+	async function updateEnemy(userDoc, userInput){
 		const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
 		let currentNetworth = 0;
 		let currentLand = 0;
@@ -129,52 +130,55 @@ async function calcEnemyPower(id){
 			}
 		}
 		}
-		const enemy = await Enemy.findById(id);
-		enemy.name = `${playerName} (#${playerId})`;
-		enemy.networth = currentNetworth;
-		enemy.land = currentLand;
-
-		let reported = []
-		for (let reportedType of Object.keys(reportedUnits)){
-			for (let unitType of Object.keys(enemy.units)){
-				for (let unitName of Object.keys(enemy.units[unitType])){
-					if (enemy.units[unitType][unitName].name === reportedType){
-						reported.push(reportedType);
-						enemy.units[unitType][unitName].minAmount = reportedUnits[reportedType].value1;
-						enemy.units[unitType][unitName].maxAmount = reportedUnits[reportedType].value2;
-					} 
-				}
-			}
-		}
-
-		for (let reportedType of Object.keys(reportedUnits)){
-			for (let buildingType of Object.keys(enemy.buildings)){
-				if (enemy.buildings[buildingType].name === reportedType){
-					reported.push(reportedType);
-					enemy.buildings[buildingType].minAmount = reportedUnits[reportedType].value1;
-					enemy.buildings[buildingType].maxAmount = reportedUnits[reportedType].value2;
-				} 
-			}
-		}
-
-		console.log(reported)
-		// once spy report is updated. This sets everything else to default value.
-		for (let i = 0; i < reported.length; i++){
-			for (let unitType of Object.keys(enemy.units)){	
-				for (let unitName of Object.keys(enemy.units[unitType])){
-					if (!reported.includes(enemy.units[unitType][unitName].name)){
-						enemy.units[unitType][unitName].minAmount = 0;
-						enemy.units[unitType][unitName].maxAmount = 0;
-					} 
-				}
-			}
-			for (let buildingType of Object.keys(enemy.buildings)){
-				if (!reported.includes(enemy.buildings[buildingType].name)){
-					enemy.buildings[buildingType].minAmount = 0;
-					enemy.buildings[buildingType].maxAmount = 0;
-				}
-			}
-		}
+		
+		// //const enemy = await Enemy.findById(userDoc.enemy._id);
+		// console.log(user)
+		// user.enemy.remove();
+		// user.enemy = new Enemy();
+		// const enemy = user.enemy;
+		// enemy.networth = currentNetworth;
+		// enemy.name = `${playerName} (#${playerId})`;
+		// enemy.land = currentLand;
+		// let reported = []
+		// for (let reportedType of Object.keys(reportedUnits)){
+		// 	for (let unitType of Object.keys(enemy.units)){
+		// 		for (let unitName of Object.keys(enemy.units[unitType])){
+		// 			if (enemy.units[unitType][unitName].name === reportedType){
+		// 				reported.push(reportedType);
+		// 				enemy.units[unitType][unitName].minAmount = reportedUnits[reportedType].value1;
+		// 				enemy.units[unitType][unitName].maxAmount = reportedUnits[reportedType].value2;
+		// 			} 
+		// 		}
+		// 	}
+		// }
+		// //console.log(reported)
+		// for (let reportedType of Object.keys(reportedUnits)){
+		// 	for (let buildingType of Object.keys(enemy.buildings)){
+		// 		if (enemy.buildings[buildingType].name === reportedType){
+		// 			reported.push(reportedType);
+		// 			enemy.buildings[buildingType].minAmount = reportedUnits[reportedType].value1;
+		// 			enemy.buildings[buildingType].maxAmount = reportedUnits[reportedType].value2;
+		// 		} 
+		// 	}
+		// }
+		// console.log(reported)
+		// // once spy report is updated. This sets everything else to default value.
+		// for (let i = 0; i < reported.length; i++){
+		// 	for (let unitType of Object.keys(enemy.units)){	
+		// 		for (let unitName of Object.keys(enemy.units[unitType])){
+		// 			if (!reported.includes(enemy.units[unitType][unitName].name)){
+		// 				enemy.units[unitType][unitName].minAmount = 0;
+		// 				enemy.units[unitType][unitName].maxAmount = 0;
+		// 			} 
+		// 		}
+		// 	}
+		// 	for (let buildingType of Object.keys(enemy.buildings)){
+		// 		if (!reported.includes(enemy.buildings[buildingType].name)){
+		// 			enemy.buildings[buildingType].minAmount = 0;
+		// 			enemy.buildings[buildingType].maxAmount = 0;
+		// 		}
+		// 	}
+		// }
 
 
 
@@ -197,7 +201,7 @@ async function calcEnemyPower(id){
 		// 		enemy.buildings[buildings].maxAmount = 0;
 		// 	}
 		// }
-		await enemy.save();
+		// await user.save();
 	}
 
 

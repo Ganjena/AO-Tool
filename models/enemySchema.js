@@ -688,7 +688,7 @@ const enemySchema = new mongoose.Schema({
 			rifleInfantry: {
                 name: {
                     type: String,
-                    default: `Rifle Infantry`
+                    default: `Rifle infantry`
                 },
                 minAmount: {
                     type: Number,
@@ -963,7 +963,7 @@ const enemySchema = new mongoose.Schema({
         airfield: {
             name: {
                 type: String,
-                default: `Airfields`
+                default: `Airfield`
             },
             minAmount: {
                 type: Number,
