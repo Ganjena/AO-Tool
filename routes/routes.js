@@ -31,7 +31,7 @@ const {
     attackerUnitTypes,
     defenderUnitTargets,
     attackerUnitTargets,
-	attackerAP
+	APCalc
 } = require(`../functions/winlossCalc.js`);
 
 const catchAsync = require(`../utilities/catchAsync.js`);
@@ -183,8 +183,8 @@ router.get("/home", isLoggedIn, (req, res) => {
 
 router.get(`/enemy`, isLoggedIn, catchAsync( async (req, res) => {
 	const enemyId = req.user.enemy._id;
-	calcEnemyLand(enemyId);
-	calcEnemyPower(enemyId);
+	await calcEnemyLand(enemyId);
+	await calcEnemyPower(enemyId);
 	const {units, buildings, land, ppeActive, name, networth}  = await Enemy.findById(enemyId);
 	//toLocalString() formats the number with comma's.
 	enemyLand = land.toLocaleString();
@@ -196,12 +196,14 @@ router.get(`/enemy`, isLoggedIn, catchAsync( async (req, res) => {
 router.post(`/enemy`, isLoggedIn, catchAsync( async (req, res) =>{
 	const user = req.user;
 	// console.log(user)
-	//const enemyId = req.user.enemy._id;
+	const enemyId = req.user.enemy._id;
+	// console.log(req.user)
+	// console.log("outside" + enemyId)
 	const userInput = req.body.report;
 	// take enemy input from user and add it to the database
 	await updateEnemy(user, userInput);
-	// // update enemy land equations and add them to database
-	// await calcEnemyLand(enemyId);
+	// update enemy land equations and add them to database
+	//await calcEnemyLand(enemyId);
 	// //update enemy power equations and add them to database
 	// await calcEnemyPower(enemyId);
 	// //update enemy attack/defence equations for the attack page
@@ -213,10 +215,12 @@ router.post(`/enemy`, isLoggedIn, catchAsync( async (req, res) =>{
 router.get("/attack", isLoggedIn, catchAsync( async(req, res) => {
 	const attacker = req.user.build._id;
 	const defender = req.user.enemy._id;
+	await calcEnemyDef(req.user.enemy._id);
 	const {attackStats} = await Enemy.findById(defender);
 	const build = await Build.findById(attacker);
-	const winLoss = await attackerAP(attacker, defender);
-	// console.log(winLoss)
+	const winLoss = await APCalc(attacker, defender);
+	//console.log(attackStats)
+	//console.log(winLoss)
 	res.render("attackCalc", {attackStats, build, winLoss});
 })
 );
@@ -278,15 +282,16 @@ router.get("/sea_units", isLoggedIn, catchAsync( async (req, res) => {
 		const {units} = await Build.findById(req.user.build._id);
 		const seaUnits = units.seaUnits;
 			//update attack power stats
-	calcAttackPower(req.user.build._id);
+	//calcAttackPower(req.user.build._id);
 	// updates win/lose outcomes
-	calcWinLoss(req.user.build._id, req.user.enemy._id);
+	//calcWinLoss(req.user.build._id, req.user.enemy._id);
 		res.render("build/seaUnits", {seaUnits});
 	})
 );
 
 router.post(`/sea_units`, isLoggedIn, validateSeaUnitsSchema, catchAsync( async (req, res) =>{
-	updateUnitsDb(req.body, `units`, `seaUnits`, req.user.build._id);
+	await updateUnitsDb(req.body, `units`, `seaUnits`, req.user.build._id);
+	await calcAttackPower(req.user.build._id);
 	res.redirect(`/sea_units`);
 }));
 
@@ -294,15 +299,16 @@ router.get("/air_units", isLoggedIn, catchAsync( async (req, res) => {
 	const { units } = await Build.findById(req.user.build._id);
 	const airUnits = units.airUnits;
 		//update attack power stats
-		calcAttackPower(req.user.build._id);
+		//calcAttackPower(req.user.build._id);
 		// updates win/lose outcomes
-		calcWinLoss(req.user.build._id, req.user.enemy._id);
+		//calcWinLoss(req.user.build._id, req.user.enemy._id);
 		res.render("build/airUnits", {airUnits});
 	})
 );
 
 router.post(`/air_units`, isLoggedIn, validateAirUnitsSchema, catchAsync( async (req, res) =>{
-	updateUnitsDb(req.body, `units`, `airUnits`, req.user.build._id);
+	await updateUnitsDb(req.body, `units`, `airUnits`, req.user.build._id);
+	await calcAttackPower(req.user.build._id);
 	res.redirect(`/air_units`);
 }));
 
@@ -310,16 +316,16 @@ router.get("/vehicle_units", isLoggedIn, catchAsync( async (req, res) => {
 	const { units } = await Build.findById(req.user.build._id);
 	const vehUnits = units.vehUnits;
 		//update attack power stats
-		calcAttackPower(req.user.build._id);
+		//calcAttackPower(req.user.build._id);
 		// updates win/lose outcomes
-		calcWinLoss(req.user.build._id, req.user.enemy._id);
+		//calcWinLoss(req.user.build._id, req.user.enemy._id);
 		res.render("build/vehicleUnits", {vehUnits});
 	})
 );
 
 router.post(`/vehicle_units`, isLoggedIn, validateVehUnitsSchema, catchAsync( async (req, res) =>{
-	updateUnitsDb(req.body, `units`, `vehUnits`, req.user.build._id);
-
+	await updateUnitsDb(req.body, `units`, `vehUnits`, req.user.build._id);
+	await calcAttackPower(req.user.build._id);
 	res.redirect(`/vehicle_units`);
 }));
 
@@ -327,15 +333,16 @@ router.get("/infantry_units", isLoggedIn, catchAsync( async (req, res) => {
 		const { units } = await Build.findById(req.user.build._id);
 		const infUnits = units.infUnits;
 		//update attack power stats
-		calcAttackPower(req.user.build._id);
+		//calcAttackPower(req.user.build._id);
 		// updates win/lose outcomes
-		calcWinLoss(req.user.build._id, req.user.enemy._id);
+		//calcWinLoss(req.user.build._id, req.user.enemy._id);
 		res.render("build/infantryUnits", {infUnits});
 	})
 );
 
 router.post(`/infantry_units`, isLoggedIn, validateInfUnitsSchema, catchAsync( async (req, res) =>{
-	updateUnitsDb(req.body, `units`, `infUnits`, req.user.build._id);
+	await updateUnitsDb(req.body, `units`, `infUnits`, req.user.build._id);
+	await calcAttackPower(req.user.build._id);
 	res.redirect(`/infantry_units`);
 }));
 

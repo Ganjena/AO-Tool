@@ -108,6 +108,7 @@ async function calcEnemyPower(id){
     // };
 
 	async function updateEnemy(userDoc, userInput){
+		// console.log(userDoc)
 		//const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
 		const regex = /(?<name>[a-zA-Z\s]+)\s*\(#(?<id>\d+)\)|Current Networth\$ (?<networth>\d+(\s\d+)*)|Current Land(?<land>\d+(\s\d+)*)\s*m2|(?<unitName>[a-zA-Z\s.-]+)\s*(?<unitValue1>\d+)\s*-\s*(?<unitValue2>\d+)/g;
 		let currentNetworth = 0;
@@ -162,12 +163,12 @@ async function calcEnemyPower(id){
 		enemy.name = `${playerName} (#${playerId})`;
 		enemy.land = currentLand;
 		let reported = []
-		console.log(`=====units picked from input========`)
-		console.log(reportedUnits)
-		console.log(`=====units picked from input========`)
+		// console.log(`=====units picked from input========`)
+		// console.log(reportedUnits)
+		// console.log(`=====units picked from input========`)
 		// console.log(`=====sorted units========`)
 		for (let reportedType of Object.keys(reportedUnits)){
-			console.log(`reported unit: ${reportedType}`)
+			// console.log(`reported unit: ${reportedType}`)
 			for (let unitType of Object.keys(enemy.units)){
 				for (let unitName of Object.keys(enemy.units[unitType])){
 					// if (enemy.units[unitType][unitName].name == `Rifle infantry`){
@@ -240,7 +241,9 @@ async function calcEnemyPower(id){
 
     //calculate enemy land
 async function calcEnemyLand(id){
+	// console.log(id)
 	const enemy = await Enemy.findById(id);
+	//console.log(enemy)
 	const {buildings, stats, land} = enemy;
 	// add up min/max amounts of buildings
 	let minBuildings = 0;
@@ -264,6 +267,7 @@ async function calcEnemyDef(id){
 	const enemy = await Enemy.findById(id);
 	const buildings = enemy.buildings;
 	const units = enemy.units;
+	let usedUnits = [];
 	let maxVsSea = 0;
 	let minVsSea = 0;
 	let maxVsAir = 0;
@@ -299,97 +303,113 @@ async function calcEnemyDef(id){
 	for (let group of Object.keys(units)){
 		if (group === `seaUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsSea += units[group][type].maxAmount*units[group][type].attack;
 					minVsSea += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsAir += units[group][type].maxAmount*units[group][type].attack;
 					minVsAir += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsVeh += units[group][type].maxAmount*units[group][type].attack;
 					minVsVeh += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsInf += units[group][type].maxAmount*units[group][type].attack;
 					minVsInf += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
 			}
 		}
 		if (group === `airUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsSea += units[group][type].maxAmount*units[group][type].attack;
 					minVsSea += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsAir += units[group][type].maxAmount*units[group][type].attack;
 					minVsAir += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsVeh += units[group][type].maxAmount*units[group][type].attack;
 					minVsVeh += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsInf += units[group][type].maxAmount*units[group][type].attack;
 					minVsInf += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
 			}
 		}
 		if (group === `vehUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsSea += units[group][type].maxAmount*units[group][type].attack;
 					minVsSea += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsAir += units[group][type].maxAmount*units[group][type].attack;
 					minVsAir += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsVeh += units[group][type].maxAmount*units[group][type].attack;
 					minVsVeh += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsInf += units[group][type].maxAmount*units[group][type].attack;
 					minVsInf += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
 			}
 		}
 		if (group === `infUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsSea += units[group][type].maxAmount*units[group][type].attack;
 					minVsSea += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsAir += units[group][type].maxAmount*units[group][type].attack;
 					minVsAir += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsVeh += units[group][type].maxAmount*units[group][type].attack;
 					minVsVeh += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					maxVsInf += units[group][type].maxAmount*units[group][type].attack;
 					minVsInf += units[group][type].minAmount*units[group][type].attack;
+					usedUnits.push(units[group][type].name);
 				}
 			}
 		}
