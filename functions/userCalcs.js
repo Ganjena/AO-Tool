@@ -109,6 +109,7 @@ function calcPower(build){
 async function calcAttackPower(id){
 	const build = await Build.findById(id);
 	const units = build.units;
+	let usedUnits = [];
 	let vsSea = 0;
 	let vsAir = 0;
 	let vsVeh = 0;
@@ -117,7 +118,7 @@ async function calcAttackPower(id){
 	for (let group of Object.keys(units)){
 		if (group === `seaUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{	
 					// add all AP that attacks sea units
 					vsSea += units[group][type].amount*units[group][type].attack;
@@ -126,9 +127,10 @@ async function calcAttackPower(id){
 							vsAir += units[group][type].amount*units[group][type].attack;
 							vsVeh += units[group][type].amount*units[group][type].attack;
 							vsInf += units[group][type].amount*units[group][type].attack;
+							usedUnits.push(units[group][type].name);
 					}
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsAir += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -136,9 +138,10 @@ async function calcAttackPower(id){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsVeh += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -146,9 +149,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsInf += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -156,22 +160,24 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Bld`))
+				if(units[group][type].targets.includes(`Bld`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					if(units[group][type].targets.length === 1){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 					}
 				}
 			}
 		}
 		if (group === `airUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsSea += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -179,9 +185,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsAir += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -189,9 +196,10 @@ async function calcAttackPower(id){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsVeh += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -199,9 +207,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsInf += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -209,22 +218,24 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Bld`))
+				if(units[group][type].targets.includes(`Bld`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					if(units[group][type].targets.length === 1){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 					}
 				}
 			}
 		}
 		if (group === `vehUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsSea += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -232,9 +243,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsAir += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -242,9 +254,10 @@ async function calcAttackPower(id){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsVeh += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -252,9 +265,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsInf += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -262,22 +276,25 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Bld`))
+				if(units[group][type].targets.includes(`Bld`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					if(units[group][type].targets.length === 1){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 					}
 				}
 			}
 		}
 		if (group === `infUnits`){
 			for (let type of Object.keys(units[group])){
-				if(units[group][type].targets.includes(`Sea`))
+				console.log(units[group])
+				if(units[group][type].targets.includes(`Sea`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsSea += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -285,9 +302,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Air`))
+				if(units[group][type].targets.includes(`Air`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsAir += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -295,9 +313,10 @@ async function calcAttackPower(id){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Veh`))
+				if(units[group][type].targets.includes(`Veh`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsVeh += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -305,9 +324,10 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Inf`))
+				if(units[group][type].targets.includes(`Inf`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					vsInf += units[group][type].amount*units[group][type].attack;
 					if(units[group][type].targets.includes(`Bld`)){
@@ -315,15 +335,17 @@ async function calcAttackPower(id){
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsSea += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 				}
 				}
-				if(units[group][type].targets.includes(`Bld`))
+				if(units[group][type].targets.includes(`Bld`) && !usedUnits.some(e => e === units[group][type].name))
 				{
 					if(units[group][type].targets.length === 1){
 						vsSea += units[group][type].amount*units[group][type].attack;
 						vsAir += units[group][type].amount*units[group][type].attack;
 						vsVeh += units[group][type].amount*units[group][type].attack;
 						vsInf += units[group][type].amount*units[group][type].attack;
+						usedUnits.push(units[group][type].name);
 					}
 				}
 			}

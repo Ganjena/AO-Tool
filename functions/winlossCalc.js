@@ -1,11 +1,12 @@
 const Build = require(`../models/buildSchema.js`);
 const Enemy = require(`../models/enemySchema.js`)
 
+// Work out what units/buildings the defender has to see what can be attacked by the attacker
 async function defenderUnitTypes(defenderId){
     const defender = await Enemy.findById(defenderId);
-    // always have "Bld" type to start with...
+    // defender will always have Buildings to hit so hard coded.
     let defenderUnitTypes = ["Bld"];
-    // work out what units types the defender has
+    // work out what units types the defender has 
     for (let group of Object.keys(defender.units)){
         for (let units of Object.keys(defender.units[group])){
             if (defender.units[group][units].minAmount > 0){
@@ -31,12 +32,35 @@ async function defenderUnitTypes(defenderId){
     }
     return defenderUnitTypes;
 }
+// think need to add building targets here also
+async function defenderUnitTargets(defenderId){
+    const defender = await Enemy.findById(defenderId);
+    let defenderUnitTargets = [];
+    // work out what units types the defender targets
+    for (let group of Object.keys(defender.units)){
+        for (let units of Object.keys(defender.units[group])){
+            if (defender.units[group][units].minAmount > 0){
+                defender.units[group][units].targets.forEach(type =>{
+                    if (defenderUnitTargets.indexOf(type) === -1){
+                        defenderUnitTargets.push(type);
+                    }
+                })
+            }
+        }
+    }
+    //remove Bld target from defender as not needed.
+    const index = defenderUnitTargets.indexOf("Bld");
+    if (index > -1){
+        defenderUnitTargets.splice(index, 1);
+    }
+    return defenderUnitTargets;
+}
 
 async function attackerUnitTypes(attackerId){
     const attacker = await Build.findById(attackerId);
     // always have "Bld" type to start with...
     let attackerUnitTypes = [];
-    // work out what units types the defender has
+    // work out what units types the attacker has
     for (let group of Object.keys(attacker.units)){
         for (let units of Object.keys(attacker.units[group])){
             if (attacker.units[group][units].amount > 0){
@@ -67,7 +91,7 @@ async function attackerUnitTargets(attackerId){
     const attacker = await Build.findById(attackerId);
     // always have "Bld" type to start with...
     let attackerUnitTargets = [];
-    // work out what units types the defender has
+    // work out what units types the attacker has
     for (let group of Object.keys(attacker.units)){
         for (let units of Object.keys(attacker.units[group])){
             if (attacker.units[group][units].amount > 0){
@@ -80,40 +104,6 @@ async function attackerUnitTargets(attackerId){
         }
     }
     return attackerUnitTargets;
-}
-
-//needs to check buildings also
-async function defenderUnitTargets(defenderId){
-    const defender = await Enemy.findById(defenderId);
-    let defenderUnitTargets = [];
-    // work out what units types the defender attacks
-    for (let group of Object.keys(defender.units)){
-        for (let units of Object.keys(defender.units[group])){
-            if (defender.units[group][units].minAmount > 0){
-                defender.units[group][units].targets.forEach(type =>{
-                    if (defenderUnitTargets.indexOf(type) === -1){
-                        defenderUnitTargets.push(type);
-                    }
-                })
-            }
-        }
-    }
-    // works out what buildings the defender attacks
-    for (let group of Object.keys(defender.buildings)){
-        if (defender.buildings[group].minAmount > 0){
-            defender.buildings[group].targets.forEach(type =>{
-                if (defenderUnitTargets.indexOf(type) === -1){
-                    defenderUnitTargets.push(type);
-                }
-            })
-        }
-    }
-    //remove Bld target from defender as not needed.
-    const index = defenderUnitTargets.indexOf("Bld");
-    if (index > -1){
-        defenderUnitTargets.splice(index, 1);
-    }
-    return defenderUnitTargets;
 }
 
 
@@ -147,43 +137,44 @@ function between(apNeeded, ap){
 }
 
 // work out attackers active AP.
-async function attackerAP (user, defender){
-    const attacker = await Build.findById(user);
+async function APCalc (user, defender){
+    const attackerSetup = await Build.findById(user);
+    const attackerUnits = await attackerUnitTypes(user);
+	const attackerTargets = await attackerUnitTargets(user);
     const defenderSetup = await Enemy.findById(defender);
     const defenderUnits = await defenderUnitTypes(defender);
-	const attackerUnits = await attackerUnitTypes(user);
-	const attackerTargets = await attackerUnitTargets(user);
-	const defenderTargets = await defenderUnitTargets(defender);
-    // console.log(defenderSetup);
+    const defenderTargets = await defenderUnitTargets(defender);
     // console.log(defenderUnits);
     // console.log(attackerUnits);
     // console.log(attackerTargets);
     // console.log(defenderTargets);
+    console.log("defenders unit/building types: " + defenderUnits)
 
+    // working out what AP is active vs the defenders unit/blding types
     let activeAP = 0;
     let usedUnits = [];
     
     defenderUnits.forEach(type => {
         if (attackerTargets.includes(type)){
-            for (let group of Object.keys(attacker.units)){
-                for (let units of Object.keys(attacker.units[group])){
-                    if(attacker.units[group][units].targets.includes(type)){
-                        if (attacker.units[group][units].amount > 0 && !usedUnits.some(e => e === attacker.units[group][units].name)){
-                            usedUnits.push(attacker.units[group][units].name)
-                            // console.log(attacker.units[group][units].amount * attacker.units[group][units].attack)
-                            activeAP += attacker.units[group][units].amount * attacker.units[group][units].attack;
+            for (let group of Object.keys(attackerSetup.units)){
+                for (let units of Object.keys(attackerSetup.units[group])){
+                    if(attackerSetup.units[group][units].targets.includes(type)){
+                        if (attackerSetup.units[group][units].amount > 0 && !usedUnits.some(e => e === attackerSetup.units[group][units].name)){
+                            usedUnits.push(attackerSetup.units[group][units].name)
+                            activeAP += attackerSetup.units[group][units].amount * attackerSetup.units[group][units].attack;
                         }
                     }
                 }
             }
         }
     })
-    // console.log(activeAP)
+
+    // working out the active AP vs the attackers units
     let likleyAmount = 0;
     let activeDP = 0;
     let usedDefUnits =[];
+    console.log("attackers unit types " + attackerUnits);
 
-    // works out activeDP from units
     attackerUnits.forEach(type => {
         if (defenderTargets.includes(type) && !defenderTargets.includes("Bld")){
             for (let group of Object.keys(defenderSetup.units)){
@@ -200,26 +191,12 @@ async function attackerAP (user, defender){
         }
     })
 
-    // works out activeDP from buildings
-    attackerUnits.forEach(type => {
-        if (defenderTargets.includes(type) && !defenderTargets.includes("Bld")){
-            for (let group of Object.keys(defenderSetup.buildings)){
-                if (defenderSetup.buildings[group].targets.includes(type)){
-                    if (defenderSetup.buildings[group].minAmount > 0 &&  !usedDefUnits.some(e => e === defenderSetup.buildings[group].name)){
-                        likleyAmount = defenderSetup.buildings[group].minAmount*1.17;
-                        activeDP += likleyAmount * defenderSetup.buildings[group].attack;
-                    }
-                }
-            }
-        }
-    })
-
     let apNeeded = Math.ceil(activeDP*1.1);
 
-    // console.log(usedDefUnits)
-    // console.log(activeAP);
-    // console.log(activeDP)
-    // console.log(apNeeded);
+    console.log("attackers AP = " + activeAP);
+    console.log("defenders AP = " + activeDP)
+    console.log("AP needed to win = " + apNeeded);
+    // console.log(defenderSetup)
 
     //work out function to check who wins
     return between(apNeeded, activeAP);
@@ -231,6 +208,6 @@ module.exports = {
     attackerUnitTypes,
     defenderUnitTargets,
     attackerUnitTargets,
-    attackerAP
+    APCalc
     
 }

@@ -688,7 +688,7 @@ const enemySchema = new mongoose.Schema({
 			rifleInfantry: {
                 name: {
                     type: String,
-                    default: `Rifle Infantry`
+                    default: `Rifle infantry`
                 },
                 minAmount: {
                     type: Number,
@@ -903,7 +903,7 @@ const enemySchema = new mongoose.Schema({
         commandCenter: {
             name: {
                 type: String,
-                default: `Command Center`
+                default: `Command Centre`
             },
             minAmount: {
                 type: Number,
@@ -963,7 +963,7 @@ const enemySchema = new mongoose.Schema({
         airfield: {
             name: {
                 type: String,
-                default: `Airfields`
+                default: `Airfield`
             },
             minAmount: {
                 type: Number,
@@ -1266,6 +1266,14 @@ const enemySchema = new mongoose.Schema({
         default: 0
     },
     ppeActive: {
+        type: Number,
+        default: 0
+    },
+    name: {
+        type: String,
+        default: "N/A"
+    },
+    networth: {
         type: Number,
         default: 0
     },
