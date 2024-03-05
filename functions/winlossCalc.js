@@ -184,18 +184,19 @@ async function APCalc (user, defender){
                             usedDefUnits.push(defenderSetup.units[group][units].name);
                             likleyAmount = defenderSetup.units[group][units].minAmount*1.17;
                             activeDP += likleyAmount * defenderSetup.units[group][units].attack;
-                            // console.log(usedDefUnits);
                         }
                     }
                 }
             }
         }
     })
+
     let apNeeded = Math.ceil(activeDP*1.1);
 
     console.log("attackers AP = " + activeAP);
     console.log("defenders AP = " + activeDP)
     console.log("AP needed to win = " + apNeeded);
+    // console.log(defenderSetup)
 
     //work out function to check who wins
     return between(apNeeded, activeAP);
