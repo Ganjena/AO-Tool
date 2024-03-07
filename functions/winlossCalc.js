@@ -32,7 +32,8 @@ async function defenderUnitTypes(defenderId){
     }
     return defenderUnitTypes;
 }
-// think need to add building targets here also
+
+
 async function defenderUnitTargets(defenderId){
     const defender = await Enemy.findById(defenderId);
     let defenderUnitTargets = [];
@@ -41,7 +42,20 @@ async function defenderUnitTargets(defenderId){
         for (let units of Object.keys(defender.units[group])){
             if (defender.units[group][units].minAmount > 0){
                 defender.units[group][units].targets.forEach(type =>{
-                    if (defenderUnitTargets.indexOf(type) === -1){
+                    if (defenderUnitTargets.indexOf(type) === -1){                     
+                        defenderUnitTargets.push(type);
+                    }
+                })
+            }
+        }
+    }
+
+    //work out what units the defenders buildings targets
+    for (let group of Object.keys(defender.buildings)){
+        for (let targets of Object.keys(defender.buildings[group])){
+            if (defender.buildings[group].minAmount > 0 && defender.buildings[group].targets[0] !== "N/A"){
+                defender.buildings[group].targets.forEach(type => {
+                    if (!defenderUnitTargets.indexOf(type) === -1){
                         defenderUnitTargets.push(type);
                     }
                 })
@@ -144,10 +158,6 @@ async function APCalc (user, defender){
     const defenderSetup = await Enemy.findById(defender);
     const defenderUnits = await defenderUnitTypes(defender);
     const defenderTargets = await defenderUnitTargets(defender);
-    // console.log(defenderUnits);
-    // console.log(attackerUnits);
-    // console.log(attackerTargets);
-    // console.log(defenderTargets);
     console.log("defenders unit/building types: " + defenderUnits)
 
     // working out what AP is active vs the defenders unit/blding types
@@ -170,22 +180,38 @@ async function APCalc (user, defender){
     })
 
     // working out the active AP vs the attackers units
-    let likleyAmount = 0;
+    let likleyUnitAmount = 0;
+    let likleyBuildingAmount = 0
     let activeDP = 0;
     let usedDefUnits =[];
     console.log("attackers unit types " + attackerUnits);
 
+    // works out attack power from the defenders units which are active during the attack
     attackerUnits.forEach(type => {
-        if (defenderTargets.includes(type) && !defenderTargets.includes("Bld")){
+        if (defenderTargets.includes(type)){
             for (let group of Object.keys(defenderSetup.units)){
                 for (let units of Object.keys(defenderSetup.units[group])){
                     if(defenderSetup.units[group][units].targets.includes(type)){
                         if (defenderSetup.units[group][units].minAmount > 0 && !usedDefUnits.some(e => e === defenderSetup.units[group][units].name)){
                             usedDefUnits.push(defenderSetup.units[group][units].name);
-                            likleyAmount = defenderSetup.units[group][units].minAmount*1.17;
-                            activeDP += likleyAmount * defenderSetup.units[group][units].attack;
+                            likleyUnitAmount = defenderSetup.units[group][units].minAmount*1.17;
+                            activeDP += likleyUnitAmount * defenderSetup.units[group][units].attack;
                         }
                     }
+                }
+            }
+        }
+    })
+    
+    // works out the attack power of the defenders buildings which are active during the attack
+    attackerUnits.forEach(type => {
+        if (defenderTargets.includes(type))
+        for (let group of Object.keys(defenderSetup.buildings)){
+            for (let targets of Object.keys(defenderSetup.buildings[group])){
+                if (defenderSetup.buildings[group].targets.includes(type) && !usedDefUnits.some(e => e === defenderSetup.buildings[group].name)){
+                    usedDefUnits.push(defenderSetup.buildings[group].name);
+                    likleyBuildingAmount = defenderSetup.buildings[group].minAmount * 1.17;
+                    activeDP += likleyBuildingAmount * defenderSetup.buildings[group].attack;
                 }
             }
         }
