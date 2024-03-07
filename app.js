@@ -98,7 +98,7 @@ const connectSrcUrls = [];
 const fontSrcUrls = [
 	"https://fonts.gstatic.com"
 ];
-app.use(
+app.use(  
     helmet.contentSecurityPolicy({
         directives: {
             defaultSrc: [],
